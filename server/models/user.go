@@ -11,9 +11,9 @@ type User struct {
 	Id                         int    `json:"id" column:"id" gorm:"primaryKey;autoIncrement:true"`
 	Email                      string `json:"email" column:"email" validate:"min=3,max=255,email,required"`
 	Nickname                   string `json:"nickname" column:"nickname" validate:"min=3,max=255,required"`
-	Password                   string `column:"password" validate:"min=3,max=5000,required"`
-	PasswordSalt               string `column:"password_salt" validate:"min=3,max=5000,required"`
-	PasswordResetToken         string `column:"password_reset_token" validate:"min=3,max=5000"`
+	Password                   string `column:"password" validate:"min=3,max=255,required"`
+	PasswordSalt               string `column:"password_salt" validate:"min=3,max=255,required"`
+	PasswordResetToken         string `column:"password_reset_token" validate:"min=3,max=255"`
 	PasswordResetTokenExpireAt int64  `column:"password_reset_token_expire_at"`
 	BillingPlan                int    `column:"billing_plan" validate:"min=1,max=5,required"`
 	Role                       int    `column:"role" json:"role" validate:"lt=4,required"`

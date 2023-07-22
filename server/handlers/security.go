@@ -20,6 +20,18 @@ type SecurityController struct {
 	BaseController
 }
 
+func (c *SecurityController) ForgotPassword(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (c *SecurityController) ResetPassword(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (c *SecurityController) ChangePassword(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 	db := store.GetDB()
 	dec := json.NewDecoder(r.Body)

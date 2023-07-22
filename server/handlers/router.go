@@ -22,7 +22,7 @@ func MakeHandler() http.Handler {
 	r.Use(middleware.Timeout(60 * time.Second))
 
 	v1Router := BuildV1Paths()
-	r.Mount("/v1", v1Router)
+	r.Mount("/api/v1", v1Router)
 
 	return r
 }
@@ -61,7 +61,7 @@ func BuildV1Paths() *chi.Mux {
 func InitHttpServer(handler http.Handler) *http.Server {
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "3000"
+		port = "8000"
 		log.Printf("Defaulting to port %s", port)
 	}
 	log.Printf("Listening on port %s", port)

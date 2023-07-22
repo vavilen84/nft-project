@@ -2,3 +2,5 @@
 .env
 db/vendor
 db/var
+server/.env
+docker/db/dbdata

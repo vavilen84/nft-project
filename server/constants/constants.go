@@ -12,6 +12,12 @@ var (
 )
 
 const (
+	RoleUser  = 1
+	RoleAdmin = 2
+
+	FreeBillingPlan     = 1
+	StandardBillingPlan = 2
+	ProBillingPlan      = 3
 
 	// email
 	// TODO: replace with real domain

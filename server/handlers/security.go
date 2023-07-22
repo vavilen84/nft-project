@@ -198,9 +198,11 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	u = &models.User{
-		Email:    dtoModel.Email,
-		Password: dtoModel.Password,
-		Nickname: dtoModel.Nickname,
+		Email:       dtoModel.Email,
+		Password:    dtoModel.Password,
+		Nickname:    dtoModel.Nickname,
+		BillingPlan: dtoModel.BillingPlan,
+		Role:        constants.RoleUser,
 	}
 	err = models.InsertUser(db, u)
 	if err != nil {

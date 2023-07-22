@@ -13,6 +13,15 @@ var (
 
 const (
 
+	// email
+	// TODO: replace with real domain
+	ResetPasswordSubject        = "Benny.com: reset forgotten password"
+	ResetPasswordHtmlBodyFormat = "In order to reset your password, please forward this link %s"
+	EmailCharSet                = "UTF-8"
+
+	// TODO: replace with real domen
+	NoReplySenderEmail = "benny.com"
+
 	//common
 	SqlDsnFormat = `%s:%s@tcp(%s:%s)/%s`
 

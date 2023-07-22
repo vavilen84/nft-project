@@ -5,6 +5,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/vavilen84/nft-project/helpers"
 	"gorm.io/gorm"
+	"time"
 )
 
 type User struct {
@@ -71,6 +72,18 @@ func FindUserById(db *gorm.DB, id int) (*User, error) {
 func FindUserByEmail(db *gorm.DB, email string) (*User, error) {
 	m := User{}
 	err := db.Where("email = ?", email).First(&m).Error
+	if err != nil {
+		helpers.LogError(err)
+	}
+	return &m, err
+}
+
+func FindUserByResetPasswordToken(db *gorm.DB, token string) (*User, error) {
+	m := User{}
+	err := db.
+		Where("reset_password_token = ?", token).
+		Where("reset_password_token_expire_at > ?", time.Now().Unix()).
+		First(&m).Error
 	if err != nil {
 		helpers.LogError(err)
 	}

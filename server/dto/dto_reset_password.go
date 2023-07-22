@@ -1,5 +1,6 @@
 package dto
 
 type ResetPassword struct {
-	NewPassword string `column:"password" validate:"min=3,max=255,required"`
+	Token       string `json:"token" validate:"min=3,max=255,required"`
+	NewPassword string `json:"new_password" validate:"min=3,max=255,required"`
 }

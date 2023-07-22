@@ -58,7 +58,7 @@ func CreateJWT(db *gorm.DB, u *models.User) (token []byte, err error) {
 	return
 }
 
-func parseJWTPayload(token []byte) (jwtPayload JWTPayload, err error) {
+func ParseJWTPayload(token []byte) (jwtPayload JWTPayload, err error) {
 	re, err := regexp.Compile(`(.*)\.(?P<payload>.*)\.(.*)`)
 	if err != nil {
 		helpers.LogError(err)
@@ -78,7 +78,7 @@ func parseJWTPayload(token []byte) (jwtPayload JWTPayload, err error) {
 }
 
 func VerifyJWT(db *gorm.DB, token []byte) (isValid bool, err error) {
-	payload, err := parseJWTPayload(token)
+	payload, err := ParseJWTPayload(token)
 	if err != nil {
 		helpers.LogError(err)
 		return

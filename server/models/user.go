@@ -38,6 +38,21 @@ func InsertUser(db *gorm.DB, m *User) (err error) {
 	return
 }
 
+func UpdateUser(db *gorm.DB, m *User) (err error) {
+	m.encodePassword()
+	validate := validator.New()
+	err = validate.Struct(m)
+	if err != nil {
+		helpers.LogError(err)
+		return
+	}
+	err = db.Save(m).Error
+	if err != nil {
+		helpers.LogError(err)
+	}
+	return
+}
+
 func (m *User) encodePassword() {
 	salt, encodedPwd := password.Encode(m.Password, nil)
 	m.Password = encodedPwd

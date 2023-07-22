@@ -23,20 +23,20 @@ type SecurityController struct {
 func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 	db := store.GetDB()
 	dec := json.NewDecoder(r.Body)
-	model := dto.SignUp{}
-	err := dec.Decode(&model)
+	dtoModel := dto.SignUp{}
+	err := dec.Decode(&dtoModel)
 	if err != nil {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
-	err = validation.ValidateByScenario(constants.ScenarioSignIn, &model)
+	err = validation.ValidateByScenario(constants.ScenarioSignIn, &dtoModel)
 	if err != nil {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, err, http.StatusNotFound)
 		return
 	}
-	u, err := models.FindUserByEmail(db, model.Email)
+	u, err := models.FindUserByEmail(db, dtoModel.Email)
 	if err != nil {
 		helpers.LogError(err)
 		if err != gorm.ErrRecordNotFound {
@@ -44,26 +44,15 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
-		err := errors.New(fmt.Sprintf("user with email %s already exists", model.Email))
+		err := errors.New(fmt.Sprintf("user with email %s already exists", dtoModel.Email))
 		helpers.LogError(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	parsedBirthday, err := helpers.ParseTime(model.Birthday)
-	if err != nil {
-		helpers.LogError(err)
-		http.Error(w, "Bad Request", http.StatusUnprocessableEntity)
-		return
-	}
 	u = &models.User{
-		FirstName: model.FirstName,
-		LastName:  model.LastName,
-		Email:     model.Email,
-		Password:  model.Password,
-		Birthday:  parsedBirthday,
-		Gender:    model.Gender,
-		Timezone:  model.Timezone,
-		Role:      model.Role,
+		Email:    dtoModel.Email,
+		Password: dtoModel.Password,
+		Nickname: dtoModel.Nickname,
 	}
 	err = models.InsertUser(db, u)
 	if err != nil {

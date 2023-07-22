@@ -9,27 +9,21 @@ import (
 
 type SignUp struct {
 	interfaces.Model
-	FirstName string `json:"firstName" validate:""`
-	LastName  string `json:"lastName" validate:"min=3,max=255,required"`
-	Email     string `json:"email" validate:"min=3,max=255,email,required"`
-	Password  string `json:"password" validate:"min=3,max=255,required"`
-	Birthday  string `json:"birthday" validate:"min=3,max=255,required"`
-	Gender    int    `json:"gender" validate:"lt=4,required"`
-	Timezone  string `json:"timezone" validate:"min=3,max=255,required"`
-	Role      int    `json:"role" validate:"lt=4,required"`
+	Nickname    string `json:"lastName"`
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+	BillingPlan int    `json:"billing_plan"`
+	Role        int    `json:"role"`
 }
 
 func (*SignUp) GetValidationRules() interface{} {
 	return validation.ScenarioRules{
 		constants.ScenarioSignUp: validation.FieldRules{
-			"FirstName": "max=255,required",
-			"LastName":  "max=255,required",
-			"Email":     "max=255,required,email",
-			"Password":  "max=255,required",
-			"Birthday":  "max=255,required",
-			"Gender":    "lt=4,required",
-			"Timezone":  "max=255,required",
-			"Role":      "lt=4,required",
+			"Nickname":    "min=3,max=255,required",
+			"Email":       "min=3,max=255,required,email",
+			"Password":    "min=6,max=255,required",
+			"BillingPlan": "lt=4,required",
+			"Role":        "lt=4,required",
 		},
 	}
 }

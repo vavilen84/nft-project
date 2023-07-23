@@ -43,7 +43,7 @@ func (m *User) TableName() string {
 	return "user"
 }
 
-func (*User) GetValidationRules() validation.ScenarioRules {
+func (*User) GetValidationRules() interface{} {
 	return validation.ScenarioRules{
 		constants.ScenarioCreate: validation.FieldRules{
 			"Email":        "min=3,max=255,email,required",
@@ -56,14 +56,14 @@ func (*User) GetValidationRules() validation.ScenarioRules {
 	}
 }
 
-func (*User) GetValidator() (v *validator.Validate) {
-	v = validator.New()
+func (*User) GetValidator() interface{} {
+	v := validator.New()
 	err := v.RegisterValidation("customPasswordValidator", CustomPasswordValidator)
 	if err != nil {
 		helpers.LogError(err)
 		return nil
 	}
-	return
+	return v
 }
 
 func InsertUser(db *gorm.DB, m *User) (err error) {

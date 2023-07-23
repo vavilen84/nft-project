@@ -60,10 +60,14 @@ const (
 	DefaultStoreTimeout = 60 * time.Second
 
 	// scenarios
-	ScenarioCreate       = "create"
-	ScenarioUpdate       = "update"
-	ScenarioDelete       = "delete"
-	ScenarioSignUp       = "sign-up"
-	ScenarioSignIn       = "sign-in"
-	ScenarioHashPassword = "hash-password"
+	ScenarioCreate         = "create"
+	ScenarioUpdate         = "update"
+	ScenarioDelete         = "delete"
+	ScenarioSignUp         = "sign-up"
+	ScenarioSignIn         = "sign-in"
+	ScenarioHashPassword   = "hash-password"
+	ScenarioForgotPassword = "forgot-password"
+	ScenarioChangePassword = "change-password"
+	ScenarioResetPassword  = "reset-password"
+	ScenarioVerifyEmail    = "verify-email"
 )

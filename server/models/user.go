@@ -61,6 +61,20 @@ func (User) GetValidationRules() interface{} {
 			"Password":     "min=8,max=5000,required,customPasswordValidator",
 			"PasswordSalt": "min=3,max=5000,required",
 		},
+		constants.ScenarioForgotPassword: validation.FieldRules{
+			"PasswordResetToken":         "min=3,max=5000,required",
+			"PasswordResetTokenExpireAt": "required,future",
+		},
+		constants.ScenarioChangePassword: validation.FieldRules{
+			"Password": "min=8,max=5000,required,customPasswordValidator",
+		},
+		constants.ScenarioResetPassword: validation.FieldRules{
+			"Password": "min=8,max=5000,required,customPasswordValidator",
+		},
+		constants.ScenarioVerifyEmail: validation.FieldRules{
+			"IsEmailVerified": "eq=true",
+			"Email2FaCode":    "eq=",
+		},
 	}
 }
 
@@ -101,18 +115,31 @@ func InsertUser(db *gorm.DB, m *User) (err error) {
 }
 
 func ForgotPassword(db *gorm.DB, m *User) (err error) {
-	return db.Model(&m).Updates(map[string]interface{}{
-		"PasswordResetToken":         m.PasswordResetToken,
-		"PasswordResetTokenExpireAt": m.PasswordResetTokenExpireAt,
-	}).Error
+	err = validation.ValidateByScenario(constants.ScenarioForgotPassword, *m)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	sql := "UPDATE user SET password_reset_token = ?, password_reset_token_expire_at = ? WHERE id IN ?"
+	return db.Exec(sql, m.PasswordResetToken, m.PasswordResetTokenExpireAt, m.Id).Error
 }
 
 func SetUserEmailVerified(db *gorm.DB, m *User) (err error) {
+	err = validation.ValidateByScenario(constants.ScenarioVerifyEmail, *m)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	sql := "UPDATE user SET is_email_verified = ?, email_2fa_code = ? WHERE id IN ?"
 	return db.Exec(sql, true, "", m.Id).Error
 }
 
 func UserResetPassword(db *gorm.DB, m *User) (err error) {
+	err = validation.ValidateByScenario(constants.ScenarioResetPassword, *m)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	m.encodePassword()
 	err = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
 	if err != nil {
@@ -124,16 +151,19 @@ func UserResetPassword(db *gorm.DB, m *User) (err error) {
 }
 
 func UserChangePassword(db *gorm.DB, m *User) (err error) {
+	err = validation.ValidateByScenario(constants.ScenarioChangePassword, *m)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	m.encodePassword()
 	err = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	return db.Model(&m).Updates(map[string]interface{}{
-		"Password":     m.Password,
-		"PasswordSalt": m.PasswordSalt,
-	}).Error
+	sql := "UPDATE user SET password = ?, password_salt = ? WHERE id IN ?"
+	return db.Exec(sql, m.Password, m.PasswordSalt, m.Id).Error
 }
 
 func (m *User) encodePassword() {

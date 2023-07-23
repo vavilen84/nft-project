@@ -50,7 +50,7 @@ func (User) GetValidationRules() interface{} {
 		constants.ScenarioCreate: validation.FieldRules{
 			"Email":        "min=3,max=255,email,required",
 			"Nickname":     "min=3,max=255,required",
-			"Password":     "min=8,max=255,required,customPasswordValidator",
+			"Password":     "min=8,max=5000,required,customPasswordValidator",
 			"PasswordSalt": "min=3,max=5000,required",
 			"BillingPlan":  "required,gt=0,lt=4",
 			"Role":         "required,gt=0,lt=2", // we can create only users, admin should be created separately
@@ -69,7 +69,13 @@ func (User) GetValidator() interface{} {
 }
 
 func InsertUser(db *gorm.DB, m *User) (err error) {
+	err = validation.ValidateByScenario(constants.ScenarioCreate, *m)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	m.encodePassword()
+	// 2 validation because we need to validate not hashed password & hashed
 	err = validation.ValidateByScenario(constants.ScenarioCreate, *m)
 	if err != nil {
 		log.Println(err)

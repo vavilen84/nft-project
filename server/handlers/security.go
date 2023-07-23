@@ -7,6 +7,7 @@ import (
 	"github.com/anaskhan96/go-password-encoder"
 	"github.com/go-playground/validator/v10"
 	"github.com/vavilen84/nft-project/auth"
+	"github.com/vavilen84/nft-project/aws"
 	"github.com/vavilen84/nft-project/constants"
 	"github.com/vavilen84/nft-project/dto"
 	"github.com/vavilen84/nft-project/helpers"
@@ -199,12 +200,15 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	emailVerificationToken := helpers.GenerateRandomString(6)
 	u = &models.User{
-		Email:       dtoModel.Email,
-		Password:    dtoModel.Password,
-		Nickname:    dtoModel.Nickname,
-		BillingPlan: dtoModel.BillingPlan,
-		Role:        constants.RoleUser,
+		Email:           dtoModel.Email,
+		Password:        dtoModel.Password,
+		Nickname:        dtoModel.Nickname,
+		BillingPlan:     dtoModel.BillingPlan,
+		Role:            constants.RoleUser,
+		IsEmailVerified: false,
+		Email2FaCode:    emailVerificationToken,
 	}
 	err = models.InsertUser(db, u)
 	if err != nil {
@@ -212,6 +216,14 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Server Error", http.StatusInternalServerError)
 		return
 	}
+
+	err = aws.SendEmailVerificationMail(u.Email, emailVerificationToken)
+	if err != nil {
+		helpers.LogError(err)
+		http.Error(w, "Server Error", http.StatusInternalServerError)
+		return
+	}
+
 	tok, err := auth.CreateJWT(db, u)
 	if err != nil {
 		helpers.LogError(err)

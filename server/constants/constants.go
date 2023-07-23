@@ -21,9 +21,10 @@ const (
 
 	// email
 	// TODO: replace with real domain
-	ResetPasswordSubject        = "Benny.com: reset forgotten password"
-	ResetPasswordHtmlBodyFormat = "In order to reset your password, please forward this link %s"
-	EmailCharSet                = "UTF-8"
+	ResetPasswordSubject            = "Benny.com: reset forgotten password"
+	ResetPasswordHtmlBodyFormat     = "In order to reset your password, please forward this link %s"
+	EmailVerificationHtmlBodyFormat = "Please, verify your email by forwarding this link %s"
+	EmailCharSet                    = "UTF-8"
 
 	// TODO: replace with real domen
 	NoReplySenderEmail = "benny.com"
@@ -59,9 +60,10 @@ const (
 	DefaultStoreTimeout = 60 * time.Second
 
 	// scenarios
-	ScenarioCreate = "create"
-	ScenarioUpdate = "update"
-	ScenarioDelete = "delete"
-	ScenarioSignUp = "sign-up"
-	ScenarioSignIn = "sign-in"
+	ScenarioCreate       = "create"
+	ScenarioUpdate       = "update"
+	ScenarioDelete       = "delete"
+	ScenarioSignUp       = "sign-up"
+	ScenarioSignIn       = "sign-in"
+	ScenarioHashPassword = "hash-password"
 )

@@ -21,11 +21,13 @@ type User struct {
 	Email                      string     `json:"email" column:"email"`
 	Nickname                   string     `json:"nickname" column:"nickname"`
 	Password                   string     `json:"password" column:"password"`
-	PasswordSalt               string     `column:"password_salt" validation:"min=3,max=5000,required"`
+	PasswordSalt               string     `column:"password_salt"`
 	PasswordResetToken         string     `column:"password_reset_token"`
 	PasswordResetTokenExpireAt *time.Time `column:"password_reset_token_expire_at"`
 	BillingPlan                int        `json:"billing_plan" column:"billing_plan"`
-	Role                       int        `json:"role" column:"role" json:"role"`
+	Role                       int        `json:"role" column:"role"`
+	IsEmailVerified            bool       `json:"is_email_verified" column:"is_email_verified"`
+	Email2FaCode               string     `json:"email_2fa_code" column:"email_2fa_code"`
 }
 
 func CustomPasswordValidator(fl validator.FieldLevel) bool {
@@ -48,11 +50,21 @@ func (m *User) TableName() string {
 func (User) GetValidationRules() interface{} {
 	return validation.ScenarioRules{
 		constants.ScenarioCreate: validation.FieldRules{
-			"Email":       "min=3,max=255,email,required",
-			"Nickname":    "min=3,max=255,required",
-			"Password":    "min=8,max=5000,required,customPasswordValidator",
-			"BillingPlan": "required,gt=0,lt=4",
-			"Role":        "required,gt=0,lt=2", // we can create only users, admin should be created separately
+			"Email":        "min=3,max=255,email,required",
+			"Nickname":     "min=3,max=255,required",
+			"Password":     "min=8,max=5000,required,customPasswordValidator",
+			"BillingPlan":  "required,gt=0,lt=4",
+			"Role":         "required,gt=0,lt=2", // we can create only users, admin should be created separately
+			"Email2FaCode": "required",
+		},
+		constants.ScenarioHashPassword: validation.FieldRules{
+			"Email":        "min=3,max=255,email,required",
+			"Nickname":     "min=3,max=255,required",
+			"Password":     "min=8,max=5000,required,customPasswordValidator",
+			"BillingPlan":  "required,gt=0,lt=4",
+			"Role":         "required,gt=0,lt=2", // we can create only users, admin should be created separately
+			"PasswordSalt": "min=3,max=5000,required",
+			"Email2FaCode": "required",
 		},
 	}
 }
@@ -74,6 +86,11 @@ func InsertUser(db *gorm.DB, m *User) (err error) {
 		return
 	}
 	m.encodePassword()
+	err = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	// 2 validation because we need to validate password salt
 	validate := validator.New()
 	err = validate.Struct(m)

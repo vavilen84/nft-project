@@ -1,4 +1,4 @@
-package main
+package aws
 
 import (
 	"fmt"
@@ -19,6 +19,20 @@ func SendResetPasswordEmail(recipient, token string) error {
 	link := fmt.Sprintf(
 		constants.ResetPasswordHtmlBodyFormat,
 		os.Getenv("DOMAIN")+"/reset-password&token="+token,
+	)
+	return sendEmail(
+		recipient,
+		constants.NoReplySenderEmail,
+		constants.ResetPasswordSubject,
+		link,
+	)
+}
+
+func SendEmailVerificationMail(recipient, token string) error {
+	// TODO: replace with real domain
+	link := fmt.Sprintf(
+		constants.EmailVerificationHtmlBodyFormat,
+		os.Getenv("DOMAIN")+"/verify-email&token="+token,
 	)
 	return sendEmail(
 		recipient,

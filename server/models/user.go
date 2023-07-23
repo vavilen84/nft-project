@@ -16,10 +16,10 @@ const alphaNumericRegexString = "^[a-zA-Z0-9]+$"
 
 type User struct {
 	Id                         int        `json:"id" column:"id" gorm:"primaryKey;autoIncrement:true"`
-	Email                      string     `json:"email" column:"email" validate:"min=3,max=255,email,required"`
-	Nickname                   string     `json:"nickname" column:"nickname" validate:"min=3,max=255,required"`
-	Password                   string     `json:"password" column:"password" validate:"min=8,max=5000,required,customPasswordValidator"`
-	PasswordSalt               string     `column:"password_salt" validate:"min=3,max=5000,required"`
+	Email                      string     `json:"email" column:"email"`
+	Nickname                   string     `json:"nickname" column:"nickname"`
+	Password                   string     `json:"password" column:"password"`
+	PasswordSalt               string     `column:"password_salt"`
 	PasswordResetToken         string     `column:"password_reset_token"`
 	PasswordResetTokenExpireAt *time.Time `column:"password_reset_token_expire_at"`
 	BillingPlan                int        `json:"billing_plan" column:"billing_plan" validate:"min=1,max=5,required"`
@@ -33,9 +33,6 @@ func CustomPasswordValidator(fl validator.FieldLevel) bool {
 	if length < 8 {
 		return false
 	}
-
-	// password must have should have at least 1 small letter, 1 uppercase letter,
-	// 1 digit, and at least 1 symbol from the set +-_()*^%$#@!
 	regex := regexp.MustCompile(alphaNumericRegexString)
 
 	return regex.MatchString(p)
@@ -48,9 +45,12 @@ func (m *User) TableName() string {
 func (User) getValidationRules() validation.ScenarioRules {
 	return validation.ScenarioRules{
 		constants.ScenarioCreate: validation.FieldRules{
-			constants.CustomerEmailField:     "required,min=1,max=255,email",
-			constants.CustomerFirstNameField: "required,min=1,max=255",
-			constants.CustomerLastNameField:  "required,min=1,max=255",
+			"Email":        "min=3,max=255,email,required",
+			"Nickname":     "min=3,max=255,required",
+			"Password":     "min=8,max=255,required,customPasswordValidator",
+			"PasswordSalt": "min=3,max=5000,required",
+			"BillingPlan":  "required,gt=0,lt=4",
+			"Role":         "required,gt=0,lt=2", // we can create only users, admin should be created separately
 		},
 	}
 }

@@ -24,5 +24,13 @@ func (s *FieldError) setErrorMessage() {
 		s.Message = fmt.Sprintf(constants.MaxValueErrorMsg, s.Name, s.Field, s.Param)
 	case constants.EmailTag:
 		s.Message = fmt.Sprintf(constants.EmailErrorMsg, s.Name)
+	case constants.GreaterThanTag:
+		s.Message = fmt.Sprintf(constants.GreaterThanTagErrorMsg, s.Name, s.Param)
+	case constants.LowerThanTag:
+		s.Message = fmt.Sprintf(constants.LowerThanTagErrorMsg, s.Name, s.Param)
+	case constants.CustomPasswordValidatorTag:
+		s.Message = fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg, s.Name)
+	default:
+		s.Message = "Undefined validation error"
 	}
 }

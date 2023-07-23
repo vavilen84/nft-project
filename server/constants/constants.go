@@ -36,16 +36,22 @@ const (
 	TestingAppEnv     = "testing"
 
 	// validation tags
-	RequiredTag = "required"
-	MinTag      = "min"
-	MaxTag      = "max"
-	EmailTag    = "email"
+	RequiredTag                = "required"
+	MinTag                     = "min"
+	MaxTag                     = "max"
+	EmailTag                   = "email"
+	GreaterThanTag             = "gt"
+	LowerThanTag               = "lt"
+	CustomPasswordValidatorTag = "customPasswordValidator"
 
 	// validation error messages
-	RequiredErrorMsg = "%s resource: '%s' is required"
-	MinValueErrorMsg = "%s resource: '%s' min value is %s"
-	MaxValueErrorMsg = "%s resource: '%s' max value is %s"
-	EmailErrorMsg    = "%s resource: email is not valid"
+	RequiredErrorMsg                   = "%s resource: '%s' is required"
+	MinValueErrorMsg                   = "%s resource: '%s' min value is %s"
+	MaxValueErrorMsg                   = "%s resource: '%s' max value is %s"
+	EmailErrorMsg                      = "%s resource: email is not valid"
+	GreaterThanTagErrorMsg             = "%s resource: value should be greater than %s"
+	LowerThanTagErrorMsg               = "%s resource: value should be lower than %s"
+	CustomPasswordValidatorTagErrorMsg = "%s resource: value should be alphanumeric and have length at least than 8 symbols"
 
 	// Server
 	DefaultWriteTimout  = 60 * time.Second

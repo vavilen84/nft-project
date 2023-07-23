@@ -7,6 +7,7 @@ import (
 	"github.com/vavilen84/nft-project/helpers"
 	"github.com/vavilen84/nft-project/validation"
 	"gorm.io/gorm"
+	"log"
 	"regexp"
 	"time"
 	"unicode/utf8"
@@ -42,7 +43,7 @@ func (m *User) TableName() string {
 	return "user"
 }
 
-func (User) getValidationRules() validation.ScenarioRules {
+func (*User) GetValidationRules() validation.ScenarioRules {
 	return validation.ScenarioRules{
 		constants.ScenarioCreate: validation.FieldRules{
 			"Email":        "min=3,max=255,email,required",
@@ -55,22 +56,21 @@ func (User) getValidationRules() validation.ScenarioRules {
 	}
 }
 
-func (User) getValidator() (v *validator.Validate) {
+func (*User) GetValidator() (v *validator.Validate) {
 	v = validator.New()
+	err := v.RegisterValidation("customPasswordValidator", CustomPasswordValidator)
+	if err != nil {
+		helpers.LogError(err)
+		return nil
+	}
 	return
 }
 
 func InsertUser(db *gorm.DB, m *User) (err error) {
 	m.encodePassword()
-	validate := validator.New()
-	err = validate.RegisterValidation("customPasswordValidator", CustomPasswordValidator)
+	err = validation.ValidateByScenario(constants.ScenarioCreate, m)
 	if err != nil {
-		helpers.LogError(err)
-		return
-	}
-	err = validate.Struct(m)
-	if err != nil {
-		helpers.LogError(err)
+		log.Println(err)
 		return
 	}
 	err = db.Create(m).Error

@@ -21,11 +21,11 @@ type User struct {
 	Email                      string     `json:"email" column:"email"`
 	Nickname                   string     `json:"nickname" column:"nickname"`
 	Password                   string     `json:"password" column:"password"`
-	PasswordSalt               string     `column:"password_salt"`
+	PasswordSalt               string     `column:"password_salt" validation:"min=3,max=5000,required"`
 	PasswordResetToken         string     `column:"password_reset_token"`
 	PasswordResetTokenExpireAt *time.Time `column:"password_reset_token_expire_at"`
-	BillingPlan                int        `json:"billing_plan" column:"billing_plan" validate:"min=1,max=5,required"`
-	Role                       int        `json:"role" column:"role" json:"role" validate:"lt=4,required"`
+	BillingPlan                int        `json:"billing_plan" column:"billing_plan"`
+	Role                       int        `json:"role" column:"role" json:"role"`
 }
 
 func CustomPasswordValidator(fl validator.FieldLevel) bool {
@@ -48,12 +48,11 @@ func (m *User) TableName() string {
 func (User) GetValidationRules() interface{} {
 	return validation.ScenarioRules{
 		constants.ScenarioCreate: validation.FieldRules{
-			"Email":        "min=3,max=255,email,required",
-			"Nickname":     "min=3,max=255,required",
-			"Password":     "min=8,max=5000,required,customPasswordValidator",
-			"PasswordSalt": "min=3,max=5000,required",
-			"BillingPlan":  "required,gt=0,lt=4",
-			"Role":         "required,gt=0,lt=2", // we can create only users, admin should be created separately
+			"Email":       "min=3,max=255,email,required",
+			"Nickname":    "min=3,max=255,required",
+			"Password":    "min=8,max=5000,required,customPasswordValidator",
+			"BillingPlan": "required,gt=0,lt=4",
+			"Role":        "required,gt=0,lt=2", // we can create only users, admin should be created separately
 		},
 	}
 }
@@ -75,10 +74,11 @@ func InsertUser(db *gorm.DB, m *User) (err error) {
 		return
 	}
 	m.encodePassword()
-	// 2 validation because we need to validate not hashed password & hashed
-	err = validation.ValidateByScenario(constants.ScenarioCreate, *m)
+	// 2 validation because we need to validate password salt
+	validate := validator.New()
+	err = validate.Struct(m)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
 		return
 	}
 	err = db.Create(m).Error

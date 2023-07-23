@@ -19,7 +19,8 @@ func TestUser_CreateScenario_emailValidation(t *testing.T) {
 	}
 	defer db.Close()
 	gormDB, err := gorm.Open(mysql.New(mysql.Config{
-		Conn: db,
+		SkipInitializeWithVersion: true,
+		Conn:                      db,
 	}), &gorm.Config{})
 
 	// should be error
@@ -55,7 +56,8 @@ func TestUser_CreateScenario_nicknameValidation(t *testing.T) {
 	}
 	defer db.Close()
 	gormDB, err := gorm.Open(mysql.New(mysql.Config{
-		Conn: db,
+		SkipInitializeWithVersion: true,
+		Conn:                      db,
 	}), &gorm.Config{})
 
 	// should be error
@@ -128,8 +130,6 @@ func TestUser_CreateScenario_passwordValidation(t *testing.T) {
 	}
 	_, ok = v["Password"]
 	assert.False(t, ok)
-	//assert.NotEmpty(t, m.PasswordSalt)
-	//assert.True(t, password.Verify(rowValidPassword, m.PasswordSalt, m.Password, nil))
 
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
@@ -143,7 +143,8 @@ func TestUser_CreateScenario_billingPlanValidation(t *testing.T) {
 	}
 	defer db.Close()
 	gormDB, err := gorm.Open(mysql.New(mysql.Config{
-		Conn: db,
+		SkipInitializeWithVersion: true,
+		Conn:                      db,
 	}), &gorm.Config{})
 
 	// should be error
@@ -178,6 +179,86 @@ func TestUser_CreateScenario_billingPlanValidation(t *testing.T) {
 	// no error
 	_, ok = v["BillingPlan"]
 	assert.False(t, ok)
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func TestUser_CreateScenario_roleValidation(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+	gormDB, err := gorm.Open(mysql.New(mysql.Config{
+		SkipInitializeWithVersion: true,
+		Conn:                      db,
+	}), &gorm.Config{})
+
+	// should be error
+	m := User{
+		Role: 0,
+	}
+	err = InsertUser(gormDB, &m)
+	v, ok := err.(validation.Errors)
+	if !ok {
+		log.Fatalln("can not assert validation.Errors")
+	}
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "User", "Role"), v["Role"][0].Message)
+
+	// should be error
+	m = User{
+		Role: 2,
+	}
+	err = InsertUser(gormDB, &m)
+	v, ok = err.(validation.Errors)
+	if !ok {
+		log.Fatalln("can not assert validation.Errors")
+	}
+	assert.Equal(t, fmt.Sprintf(constants.LowerThanTagErrorMsg, "User", "2"), v["Role"][0].Message)
+
+	m.Role = constants.RoleUser
+	err = InsertUser(gormDB, &m)
+	v, ok = err.(validation.Errors)
+	if !ok {
+		log.Fatalln("can not assert validation.Errors")
+	}
+
+	// no error
+	_, ok = v["Role"]
+	assert.False(t, ok)
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func TestUser_CreateScenario_OkInsert(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+	gormDB, err := gorm.Open(mysql.New(mysql.Config{
+		SkipInitializeWithVersion: true,
+		Conn:                      db,
+	}), &gorm.Config{})
+
+	mock.ExpectBegin()
+	mock.ExpectExec("INSERT INTO `user`").WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	// no error
+	m := User{
+		BillingPlan: constants.FreeBillingPlan,
+		Nickname:    "nick",
+		Email:       "valid.email@example.com",
+		Password:    "12345678",
+		Role:        constants.RoleUser,
+	}
+	err = InsertUser(gormDB, &m)
+	assert.Nil(t, err)
 
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)

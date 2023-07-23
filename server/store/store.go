@@ -7,7 +7,6 @@ import (
 	"github.com/vavilen84/nft-project/helpers"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"os"
 	"time"
 )
 
@@ -27,24 +26,7 @@ func GetDefaultDBContext() context.Context {
 }
 
 func processInitDb(sqlServerDsn, mysqlDbName, DbDsn string) (db *gorm.DB) {
-	sqlDriver := os.Getenv("SQL_DRIVER")
-	// use credentials without db in order to create db
-	sqlDb, err := sql.Open(sqlDriver, sqlServerDsn)
-	if err != nil {
-		panic("failed to connect sql server: " + err.Error())
-	}
-	ctx := GetDefaultDBContext()
-	conn, err := sqlDb.Conn(ctx)
-	if err != nil {
-		helpers.LogError(err)
-	}
-	defer conn.Close()
-	err = createDbIfNotExists(ctx, conn, mysqlDbName)
-	if err != nil {
-		panic("failed to create test db: " + err.Error())
-	}
-
-	db, err = gorm.Open(mysql.Open(DbDsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(DbDsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to database: " + err.Error())
 	}

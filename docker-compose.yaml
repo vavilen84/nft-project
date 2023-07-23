@@ -61,7 +61,7 @@ services:
 #      dockerfile: ./docker/server/Dockerfile
 #      context: .
 #    ports:
-#      - "8050:8050"
+#      - "8000:8000"
 #    expose:
 #      - 8050
 #    depends_on:

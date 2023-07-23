@@ -12,7 +12,6 @@ import (
 	"github.com/vavilen84/nft-project/helpers"
 	"github.com/vavilen84/nft-project/models"
 	"github.com/vavilen84/nft-project/store"
-	"github.com/vavilen84/nft-project/validation"
 	"gorm.io/gorm"
 	"net/http"
 	"time"
@@ -178,10 +177,11 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
-	err = validation.ValidateByScenario(constants.ScenarioSignIn, &dtoModel)
+	validate := validator.New()
+	err = validate.Struct(dtoModel)
 	if err != nil {
 		helpers.LogError(err)
-		c.WriteErrorResponse(w, err, http.StatusNotFound)
+		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
 	u, err := models.FindUserByEmail(db, dtoModel.Email)
@@ -224,31 +224,32 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 func (c *SecurityController) Login(w http.ResponseWriter, r *http.Request) {
 	db := store.GetDB()
 	dec := json.NewDecoder(r.Body)
-	model := dto.Login{}
-	err := dec.Decode(&model)
+	dtoModel := dto.Login{}
+	err := dec.Decode(&dtoModel)
 	if err != nil {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
-	err = validation.ValidateByScenario(constants.ScenarioSignIn, &model)
+	validate := validator.New()
+	err = validate.Struct(dtoModel)
 	if err != nil {
 		helpers.LogError(err)
-		c.WriteErrorResponse(w, err, http.StatusUnprocessableEntity)
+		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
-	u, err := models.FindUserByEmail(db, model.Email)
+	u, err := models.FindUserByEmail(db, dtoModel.Email)
 	if err != nil {
 		helpers.LogError(err)
 		if err == gorm.ErrRecordNotFound {
-			err = errors.New(fmt.Sprintf("user with email %s not found", model.Email))
+			err = errors.New(fmt.Sprintf("user with email %s not found", dtoModel.Email))
 			c.WriteErrorResponse(w, err, http.StatusNotFound)
 		} else {
 			c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
 		}
 		return
 	}
-	passwordIsValid := password.Verify(model.Password, u.PasswordSalt, u.Password, nil)
+	passwordIsValid := password.Verify(dtoModel.Password, u.PasswordSalt, u.Password, nil)
 	if !passwordIsValid {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, constants.UnauthorizedError, http.StatusUnauthorized)

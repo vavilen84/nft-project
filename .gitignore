@@ -4,3 +4,5 @@ db/vendor
 db/var
 server/.env
 docker/db/dbdata
+server/app
+server/tmp/build-errors.log

@@ -5,7 +5,7 @@ tmp_dir = "tmp"
 [build]
   args_bin = []
   bin = "./app"
-  cmd = "go build -o app main.go database.go cache.go accounts.go sessions.go api.go audit.go"
+  cmd = "go build -o app main.go"
   delay = 1000
   exclude_dir = ["assets", "tmp", "testdata", ".vscode", ".idea"]
   exclude_file = ["Dockerfile", "Dockerfile.local", "docker-compose.yml"]

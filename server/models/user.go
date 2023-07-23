@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/anaskhan96/go-password-encoder"
 	"github.com/go-playground/validator/v10"
 	"github.com/vavilen84/nft-project/constants"
@@ -29,21 +30,22 @@ type User struct {
 
 func CustomPasswordValidator(fl validator.FieldLevel) bool {
 	p := fl.Field().String()
-
 	length := utf8.RuneCountInString(p)
 	if length < 8 {
 		return false
 	}
-	regex := regexp.MustCompile(alphaNumericRegexString)
-
-	return regex.MatchString(p)
+	r, err := regexp.Match(alphaNumericRegexString, []byte(p))
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	return r
 }
 
 func (m *User) TableName() string {
 	return "user"
 }
 
-func (*User) GetValidationRules() interface{} {
+func (User) GetValidationRules() interface{} {
 	return validation.ScenarioRules{
 		constants.ScenarioCreate: validation.FieldRules{
 			"Email":        "min=3,max=255,email,required",
@@ -56,7 +58,7 @@ func (*User) GetValidationRules() interface{} {
 	}
 }
 
-func (*User) GetValidator() interface{} {
+func (User) GetValidator() interface{} {
 	v := validator.New()
 	err := v.RegisterValidation("customPasswordValidator", CustomPasswordValidator)
 	if err != nil {
@@ -68,7 +70,7 @@ func (*User) GetValidator() interface{} {
 
 func InsertUser(db *gorm.DB, m *User) (err error) {
 	m.encodePassword()
-	err = validation.ValidateByScenario(constants.ScenarioCreate, m)
+	err = validation.ValidateByScenario(constants.ScenarioCreate, *m)
 	if err != nil {
 		log.Println(err)
 		return

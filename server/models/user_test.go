@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
@@ -9,6 +10,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+	"strings"
 	"testing"
 )
 
@@ -234,6 +236,44 @@ func TestUser_CreateScenario_roleValidation(t *testing.T) {
 	}
 }
 
+func TestUser_CreateScenario_2FaCodeValidation(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+	gormDB, err := gorm.Open(mysql.New(mysql.Config{
+		SkipInitializeWithVersion: true,
+		Conn:                      db,
+	}), &gorm.Config{})
+
+	// should be error
+	m := User{
+		Email2FaCode: "",
+	}
+	err = InsertUser(gormDB, &m)
+	v, ok := err.(validation.Errors)
+	if !ok {
+		log.Fatalln("can not assert validation.Errors")
+	}
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "User", "Email2FaCode"), v["Email2FaCode"][0].Message)
+
+	m.Email2FaCode = "123456"
+	err = InsertUser(gormDB, &m)
+	v, ok = err.(validation.Errors)
+	if !ok {
+		log.Fatalln("can not assert validation.Errors")
+	}
+
+	// no error
+	_, ok = v["Email2FaCode"]
+	assert.False(t, ok)
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
 func TestUser_CreateScenario_OkInsert(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -251,13 +291,46 @@ func TestUser_CreateScenario_OkInsert(t *testing.T) {
 
 	// no error
 	m := User{
-		BillingPlan: constants.FreeBillingPlan,
-		Nickname:    "nick",
-		Email:       "valid.email@example.com",
-		Password:    "12345678",
-		Role:        constants.RoleUser,
+		BillingPlan:  constants.FreeBillingPlan,
+		Nickname:     "nick",
+		Email:        "valid.email@example.com",
+		Password:     "12345678",
+		Role:         constants.RoleUser,
+		Email2FaCode: "123456",
 	}
 	err = InsertUser(gormDB, &m)
+	assert.Nil(t, err)
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+type CustomMatcher struct{}
+
+func (c CustomMatcher) Match(expectedSQL, actualSQL string) error {
+	if !strings.Contains(actualSQL, expectedSQL) {
+		return errors.New("SQL doesnt match")
+	}
+	return nil
+}
+
+func TestUser_SetUserEmailVerified(t *testing.T) {
+	customMatcher := CustomMatcher{}
+	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+	gormDB, err := gorm.Open(mysql.New(mysql.Config{
+		SkipInitializeWithVersion: true,
+		Conn:                      db,
+	}), &gorm.Config{})
+
+	mock.ExpectExec("UPDATE user").WillReturnResult(sqlmock.NewResult(1, 1))
+
+	m := User{}
+	err = SetUserEmailVerified(gormDB, &m)
 	assert.Nil(t, err)
 
 	if err := mock.ExpectationsWereMet(); err != nil {

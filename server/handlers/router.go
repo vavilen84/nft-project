@@ -54,6 +54,7 @@ func BuildV1Paths() *chi.Mux {
 		r.Post("/forgot-password", c.ForgotPassword)
 		r.Post("/reset-password", c.ResetPassword)
 		r.Post("/change-password", c.ChangePassword)
+		r.Post("/verify-email", c.VerifyEmail)
 	})
 	return r
 }

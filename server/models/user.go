@@ -105,19 +105,21 @@ func InsertUser(db *gorm.DB, m *User) (err error) {
 	return
 }
 
-func UpdateUser(db *gorm.DB, m *User) (err error) {
-	m.encodePassword()
-	validate := validator.New()
-	err = validate.Struct(m)
-	if err != nil {
-		helpers.LogError(err)
-		return
-	}
-	err = db.Save(m).Error
-	if err != nil {
-		helpers.LogError(err)
-	}
-	return
+func ForgotPassword(db *gorm.DB, m *User) (err error) {
+
+	sql := `
+		UPDATE user
+		SET password_reset_token = ?, email_2fa_code = ''
+		WHERE user_id = ?
+		`
+	return db.Exec(sql, m.Id).Error
+}
+
+func SetUserEmailVerified(db *gorm.DB, m *User) (err error) {
+	return db.Model(&m).Updates(map[string]interface{}{
+		"IsEmailVerified": m.IsEmailVerified,
+		"Email2FaCode":    m.Email2FaCode,
+	}).Error
 }
 
 func (m *User) encodePassword() {
@@ -129,6 +131,15 @@ func (m *User) encodePassword() {
 func FindUserById(db *gorm.DB, id int) (*User, error) {
 	m := User{}
 	err := db.First(&m, id).Error
+	if err != nil {
+		helpers.LogError(err)
+	}
+	return &m, err
+}
+
+func FindUserBy2FAToken(db *gorm.DB, token string) (*User, error) {
+	m := User{}
+	err := db.Where("email_2fa_code = ?", token).First(&m).Error
 	if err != nil {
 		helpers.LogError(err)
 	}

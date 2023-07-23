@@ -43,11 +43,14 @@ func (c *SecurityController) ForgotPassword(w http.ResponseWriter, r *http.Reque
 		}
 		return
 	}
+
 	token := helpers.GenerateRandomString(32)
-	u.PasswordResetToken = token
 	currentTime := time.Now()
 	oneHourLater := currentTime.Add(time.Hour)
+
+	u.PasswordResetToken = token
 	u.PasswordResetTokenExpireAt = &oneHourLater
+
 	err = models.ForgotPassword(db, u)
 	if err != nil {
 		helpers.LogError(err)

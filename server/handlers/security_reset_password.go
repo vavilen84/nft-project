@@ -42,7 +42,7 @@ func (c *SecurityController) ResetPassword(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	u.Password = dtoModel.NewPassword
-	err = models.UpdateUser(db, u)
+	err = models.UserResetPassword(db, u)
 	if err != nil {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)

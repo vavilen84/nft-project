@@ -58,13 +58,8 @@ func (User) GetValidationRules() interface{} {
 			"Email2FaCode": "required",
 		},
 		constants.ScenarioHashPassword: validation.FieldRules{
-			"Email":        "min=3,max=255,email,required",
-			"Nickname":     "min=3,max=255,required",
 			"Password":     "min=8,max=5000,required,customPasswordValidator",
-			"BillingPlan":  "required,gt=0,lt=4",
-			"Role":         "required,gt=0,lt=2", // we can create only users, admin should be created separately
 			"PasswordSalt": "min=3,max=5000,required",
-			"Email2FaCode": "required",
 		},
 	}
 }
@@ -106,19 +101,42 @@ func InsertUser(db *gorm.DB, m *User) (err error) {
 }
 
 func ForgotPassword(db *gorm.DB, m *User) (err error) {
-
-	sql := `
-		UPDATE user
-		SET password_reset_token = ?, email_2fa_code = ''
-		WHERE user_id = ?
-		`
-	return db.Exec(sql, m.Id).Error
+	return db.Model(&m).Updates(map[string]interface{}{
+		"PasswordResetToken":         m.PasswordResetToken,
+		"PasswordResetTokenExpireAt": m.PasswordResetTokenExpireAt,
+	}).Error
 }
 
 func SetUserEmailVerified(db *gorm.DB, m *User) (err error) {
 	return db.Model(&m).Updates(map[string]interface{}{
 		"IsEmailVerified": m.IsEmailVerified,
 		"Email2FaCode":    m.Email2FaCode,
+	}).Error
+}
+
+func UserResetPassword(db *gorm.DB, m *User) (err error) {
+	m.encodePassword()
+	err = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	return db.Model(&m).Updates(map[string]interface{}{
+		"Password":     m.Password,
+		"PasswordSalt": m.PasswordSalt,
+	}).Error
+}
+
+func UserChangePassword(db *gorm.DB, m *User) (err error) {
+	m.encodePassword()
+	err = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	return db.Model(&m).Updates(map[string]interface{}{
+		"Password":     m.Password,
+		"PasswordSalt": m.PasswordSalt,
 	}).Error
 }
 

@@ -20,9 +20,26 @@ func (*BaseController) WriteSuccessResponse(w http.ResponseWriter, data interfac
 func (*BaseController) WriteErrorResponse(w http.ResponseWriter, err error, status int) {
 	resp := dto.Response{}
 	helpers.LogError(err)
-	resp = dto.Response{
-		Error:  err.Error(),
-		Status: status,
+	ok := false
+	//errs, ok := err.(validation.Errors)
+	if ok {
+		//formErrors := make(map[string][]string)
+		//for field, fieldErrors := range errs {
+		//	fieldErrMsgs := make([]string, 0)
+		//	for _, v := range fieldErrors {
+		//		fieldErrMsgs = append(fieldErrMsgs, v.Message)
+		//	}
+		//	formErrors[field] = fieldErrMsgs
+		//}
+		//resp = dto.Response{
+		//	FormErrors: formErrors,
+		//	Status:     status,
+		//}
+	} else {
+		resp = dto.Response{
+			Error:  err.Error(),
+			Status: status,
+		}
 	}
 	writeResponse(w, resp, status)
 }
@@ -38,5 +55,7 @@ func writeResponse(w http.ResponseWriter, resp dto.Response, status int) {
 		helpers.LogError(e)
 		return
 	}
+	setCacheHeaders(w)
+	setContentTypeHeader(w)
 	w.WriteHeader(status)
 }

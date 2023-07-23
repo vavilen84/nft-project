@@ -32,8 +32,8 @@ func TestRegister(t *testing.T) {
 
 	body := dto.SignUp{
 		Nickname:    "test_" + helpers.GenerateRandomString(5),
-		Email:       "user_" + helpers.GenerateRandomString(5) + "@example.com",
-		Password:    "12345678",
+		Email:       "user_" + helpers.GenerateRandomString(5) + "example.com",
+		Password:    "1234567",
 		BillingPlan: constants.FreeBillingPlan,
 	}
 	bodyBytes, err := json.Marshal(body)

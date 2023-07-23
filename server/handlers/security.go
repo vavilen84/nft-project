@@ -51,7 +51,9 @@ func (c *SecurityController) ForgotPassword(w http.ResponseWriter, r *http.Reque
 	}
 	token := helpers.GenerateRandomString(32)
 	u.PasswordResetToken = token
-	u.PasswordResetTokenExpireAt = time.Now().Unix() + (1 * 60 * 60)
+	currentTime := time.Now()
+	oneHourLater := currentTime.Add(time.Hour)
+	u.PasswordResetTokenExpireAt = &oneHourLater
 	err = models.UpdateUser(db, u)
 	if err != nil {
 		helpers.LogError(err)

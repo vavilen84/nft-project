@@ -24,8 +24,6 @@ func TestUser_ResetPassword_passwordValidation(t *testing.T) {
 		Conn:                      db,
 	}), &gorm.Config{})
 
-	mock.ExpectExec("UPDATE user").WillReturnResult(sqlmock.NewResult(1, 1))
-
 	// should be error
 	m := User{
 		Password: "1234567",
@@ -36,28 +34,25 @@ func TestUser_ResetPassword_passwordValidation(t *testing.T) {
 		log.Fatalln("can not assert validation.Errors")
 	}
 	assert.Equal(t, fmt.Sprintf(constants.MinValueErrorMsg, "User", "Password", "8"), v["Password"][0].Message)
-	//
-	//// should be error
-	//m = User{
-	//	Password: "1234567+",
-	//}
-	//err = UserResetPassword(gormDB, &m)
-	//v, ok = err.(validation.Errors)
-	//if !ok {
-	//	log.Fatalln("can not assert validation.Errors")
-	//}
-	//assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg, "User"), v["Password"][0].Message)
 
-	//// no error
-	//rowValidPassword := "12345678"
-	//m.Password = rowValidPassword
-	//err = UserResetPassword(gormDB, &m)
-	//v, ok = err.(validation.Errors)
-	//if !ok {
-	//	log.Fatalln("can not assert validation.Errors")
-	//}
-	//_, ok = v["Password"]
-	//assert.False(t, ok)
+	// should be error
+	m = User{
+		Password: "1234567+",
+	}
+	err = UserResetPassword(gormDB, &m)
+	v, ok = err.(validation.Errors)
+	if !ok {
+		log.Fatalln("can not assert validation.Errors")
+	}
+	assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg, "User"), v["Password"][0].Message)
+
+	mock.ExpectExec("UPDATE user").WillReturnResult(sqlmock.NewResult(1, 1))
+
+	// no error
+	rowValidPassword := "12345678"
+	m.Password = rowValidPassword
+	err = UserResetPassword(gormDB, &m)
+	assert.Nil(t, err)
 
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)

@@ -100,13 +100,6 @@ func InsertUser(db *gorm.DB, m *User) (err error) {
 		log.Println(err)
 		return
 	}
-	// 2 validation because we need to validate password salt
-	validate := validator.New()
-	err = validate.Struct(m)
-	if err != nil {
-		helpers.LogError(err)
-		return
-	}
 	err = db.Create(m).Error
 	if err != nil {
 		helpers.LogError(err)

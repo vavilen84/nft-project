@@ -15,7 +15,7 @@ import (
 func (c *SecurityController) VerifyEmail(w http.ResponseWriter, r *http.Request) {
 	token := chi.URLParam(r, "token")
 	db := store.GetDB()
-	u, err := models.FindUserBy2FAToken(db, token)
+	u, err := models.FindUserByTwoFAToken(db, token)
 	if err != nil {
 		helpers.LogError(err)
 		if err == gorm.ErrRecordNotFound {

@@ -163,9 +163,9 @@ func FindUserById(db *gorm.DB, id int) (*User, error) {
 	return &m, err
 }
 
-func FindUserBy2FAToken(db *gorm.DB, token string) (*User, error) {
+func FindUserByTwoFAToken(db *gorm.DB, token string) (*User, error) {
 	m := User{}
-	err := db.Where("email_2fa_code = ?", token).First(&m).Error
+	err := db.Where("email_two_fa_code = ?", token).First(&m).Error
 	if err != nil {
 		helpers.LogError(err)
 	}

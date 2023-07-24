@@ -54,7 +54,7 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 		BillingPlan:     dtoModel.BillingPlan,
 		Role:            constants.RoleUser,
 		IsEmailVerified: false,
-		Email2FaCode:    emailVerificationToken,
+		EmailTwoFaCode:  emailVerificationToken,
 	}
 	err = models.InsertUser(db, u)
 	if err != nil {

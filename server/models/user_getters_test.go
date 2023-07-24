@@ -33,30 +33,30 @@ func TestUser_FindUserById(t *testing.T) {
 	}
 }
 
-//func TestUser_FindUserBy2FAToken(t *testing.T) {
-//	customMatcher := CustomMatcher{}
-//	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
-//	if err != nil {
-//		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-//	}
-//	defer db.Close()
-//	gormDB, err := gorm.Open(mysql.New(mysql.Config{
-//		SkipInitializeWithVersion: true,
-//		Conn:                      db,
-//	}), &gorm.Config{})
-//
-//	columns := []string{"email_2fa_code"}
-//	mock.ExpectQuery("SELECT * FROM `user`").
-//		WithArgs("token").
-//		WillReturnRows(sqlmock.NewRows(columns).FromCSVString("token"))
-//
-//	_, err = FindUserBy2FAToken(gormDB, "token")
-//	assert.Nil(t, err)
-//
-//	if err := mock.ExpectationsWereMet(); err != nil {
-//		t.Errorf("there were unfulfilled expectations: %s", err)
-//	}
-//}
+func TestUser_FindUserBy2FAToken(t *testing.T) {
+	customMatcher := CustomMatcher{}
+	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+	gormDB, err := gorm.Open(mysql.New(mysql.Config{
+		SkipInitializeWithVersion: true,
+		Conn:                      db,
+	}), &gorm.Config{})
+
+	columns := []string{"email_2fa_code"}
+	mock.ExpectQuery("SELECT * FROM `user`").
+		WithArgs("token").
+		WillReturnRows(sqlmock.NewRows(columns).FromCSVString("token"))
+
+	_, err = FindUserBy2FAToken(gormDB, "token")
+	assert.Nil(t, err)
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
 
 func Test_FindUserByEmail(t *testing.T) {
 	customMatcher := CustomMatcher{}
@@ -83,37 +83,27 @@ func Test_FindUserByEmail(t *testing.T) {
 	}
 }
 
-//
-//func TestUser_FindUserByResetPasswordToken(t *testing.T) {
-//	customMatcher := CustomMatcher{}
-//	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
-//	if err != nil {
-//		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-//	}
-//	defer db.Close()
-//	gormDB, err := gorm.Open(mysql.New(mysql.Config{
-//		SkipInitializeWithVersion: true,
-//		Conn:                      db,
-//	}), &gorm.Config{})
-//
-//	duration, err := time.ParseDuration("24h")
-//	if err != nil {
-//		fmt.Println("Error parsing duration:", err)
-//		return
-//	}
-//	currentTime := time.Now()
-//	// Add 24 hours to the current time
-//	futureTime := currentTime.Add(duration)
-//
-//	columns := []string{"password_reset_token"}
-//	mock.ExpectQuery("SELECT * FROM `user`").
-//		WithArgs("token", futureTime).
-//		WillReturnRows(sqlmock.NewRows(columns).FromCSVString("token"))
-//
-//	_, err = FindUserByResetPasswordToken(gormDB, "token")
-//	assert.Nil(t, err)
-//
-//	if err := mock.ExpectationsWereMet(); err != nil {
-//		t.Errorf("there were unfulfilled expectations: %s", err)
-//	}
-//}
+func TestUser_FindUserByResetPasswordToken(t *testing.T) {
+	customMatcher := CustomMatcher{}
+	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+	gormDB, err := gorm.Open(mysql.New(mysql.Config{
+		SkipInitializeWithVersion: true,
+		Conn:                      db,
+	}), &gorm.Config{})
+
+	columns := []string{"password_reset_token"}
+	mock.ExpectQuery("SELECT * FROM `user`").
+		WithArgs("token", sqlmock.AnyArg()).
+		WillReturnRows(sqlmock.NewRows(columns).FromCSVString("token"))
+
+	_, err = FindUserByResetPasswordToken(gormDB, "token")
+	assert.Nil(t, err)
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}

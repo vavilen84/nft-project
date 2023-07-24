@@ -247,7 +247,7 @@ func TestUser_CreateScenario_2FaCodeValidation(t *testing.T) {
 
 	// should be error
 	m := User{
-		Email2FaCode: "",
+		EmailTwoFaCode: "",
 	}
 	err = InsertUser(gormDB, &m)
 	v, ok := err.(validation.Errors)
@@ -256,7 +256,7 @@ func TestUser_CreateScenario_2FaCodeValidation(t *testing.T) {
 	}
 	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "User", "Email2FaCode"), v["Email2FaCode"][0].Message)
 
-	m.Email2FaCode = "123456"
+	m.EmailTwoFaCode = "123456"
 	err = InsertUser(gormDB, &m)
 	v, ok = err.(validation.Errors)
 	if !ok {
@@ -289,12 +289,12 @@ func TestUser_CreateScenario_OkInsert(t *testing.T) {
 
 	// no error
 	m := User{
-		BillingPlan:  constants.FreeBillingPlan,
-		Nickname:     "nick",
-		Email:        "valid.email@example.com",
-		Password:     "12345678",
-		Role:         constants.RoleUser,
-		Email2FaCode: "123456",
+		BillingPlan:    constants.FreeBillingPlan,
+		Nickname:       "nick",
+		Email:          "valid.email@example.com",
+		Password:       "12345678",
+		Role:           constants.RoleUser,
+		EmailTwoFaCode: "123456",
 	}
 	err = InsertUser(gormDB, &m)
 	assert.Nil(t, err)

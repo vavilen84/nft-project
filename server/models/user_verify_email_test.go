@@ -29,7 +29,7 @@ func TestUser_SetUserEmailVerified(t *testing.T) {
 
 	// should be error
 	m := User{
-		Email2FaCode: "somevalue",
+		EmailTwoFaCode: "somevalue",
 	}
 	err = SetUserEmailVerified(gormDB, &m)
 	v, ok := err.(validation.Errors)
@@ -43,7 +43,7 @@ func TestUser_SetUserEmailVerified(t *testing.T) {
 
 	m = User{
 		IsEmailVerified: true,
-		Email2FaCode:    "",
+		EmailTwoFaCode:  "",
 	}
 	err = SetUserEmailVerified(gormDB, &m)
 	assert.Nil(t, err)

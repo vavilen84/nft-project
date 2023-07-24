@@ -28,7 +28,7 @@ type User struct {
 	BillingPlan                int        `json:"billing_plan" column:"billing_plan"`
 	Role                       int        `json:"role" column:"role"`
 	IsEmailVerified            bool       `json:"is_email_verified" column:"is_email_verified"`
-	Email2FaCode               string     `json:"email_2fa_code" column:"email_2fa_code"`
+	EmailTwoFaCode             string     `json:"email_two_fa_code" column:"email_two_fa_code"`
 }
 
 func CustomFutureValidator(fl validator.FieldLevel) bool {

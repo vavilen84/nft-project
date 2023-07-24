@@ -27,7 +27,7 @@ func (c *SecurityController) VerifyEmail(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	u.IsEmailVerified = true
-	u.Email2FaCode = ""
+	u.EmailTwoFaCode = ""
 	err = models.SetUserEmailVerified(db, u)
 	if err != nil {
 		helpers.LogError(err)

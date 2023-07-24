@@ -2,6 +2,7 @@ package aws
 
 import (
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/vavilen84/nft-project/constants"
 	"github.com/vavilen84/nft-project/helpers"
 	"os"
@@ -44,8 +45,13 @@ func SendEmailVerificationMail(recipient, token string) error {
 
 func sendEmail(recipient, sender, subject, htmlBody string) error {
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(os.Getenv("AWS_REGION"))},
-	)
+		Region: aws.String(os.Getenv("AWS_REGION")),
+		Credentials: credentials.NewStaticCredentials(
+			os.Getenv("SES_AWS_ACCESS_KEY_ID"),
+			os.Getenv("SES_AWS_SECRET_ACCESS_KEY"),
+			"",
+		),
+	})
 	svc := ses.New(sess)
 	input := &ses.SendEmailInput{
 		Destination: &ses.Destination{
@@ -68,7 +74,8 @@ func sendEmail(recipient, sender, subject, htmlBody string) error {
 		},
 		Source: aws.String(sender),
 	}
-	_, err = svc.SendEmail(input)
+	o, err := svc.SendEmail(input)
+	fmt.Println(o)
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
 			switch aerr.Code() {

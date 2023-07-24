@@ -29,15 +29,16 @@ func initApp() *httptest.Server {
 // TODO: make fixtures load/clear before each integration test
 // for now skipped and only for debug purposes
 func TestRegister(t *testing.T) {
-	t.Skip()
+	//t.Skip()
 
 	ts := initApp()
 	defer ts.Close()
 
 	body := dto.SignUp{
-		Nickname:    "test_" + helpers.GenerateRandomString(5),
-		Email:       "user_" + helpers.GenerateRandomString(5) + "example.com",
-		Password:    "1234567",
+		Nickname: "test_" + helpers.GenerateRandomString(5),
+		Email:    "vladimir.teplov@gmail.com",
+		//Email:       "user_" + helpers.GenerateRandomString(5) + "example.com",
+		Password:    "12345678",
 		BillingPlan: constants.FreeBillingPlan,
 	}
 	bodyBytes, err := json.Marshal(body)

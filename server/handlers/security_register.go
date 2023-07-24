@@ -37,13 +37,13 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		helpers.LogError(err)
 		if err != gorm.ErrRecordNotFound {
-			http.Error(w, "Bad Request", http.StatusInternalServerError)
+			c.WriteErrorResponse(w, err, http.StatusInternalServerError)
 			return
 		}
 	} else {
 		err := errors.New(fmt.Sprintf("user with email %s already exists", dtoModel.Email))
 		helpers.LogError(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		c.WriteErrorResponse(w, err, http.StatusBadRequest)
 		return
 	}
 	emailVerificationToken := helpers.GenerateRandomString(6)
@@ -56,24 +56,25 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 		IsEmailVerified: false,
 		EmailTwoFaCode:  emailVerificationToken,
 	}
+
 	err = models.InsertUser(db, u)
 	if err != nil {
 		helpers.LogError(err)
-		http.Error(w, "Server Error", http.StatusInternalServerError)
+		c.WriteErrorResponse(w, err, http.StatusBadRequest)
 		return
 	}
 
 	err = aws.SendEmailVerificationMail(u.Email, emailVerificationToken)
 	if err != nil {
 		helpers.LogError(err)
-		http.Error(w, "Server Error", http.StatusInternalServerError)
+		c.WriteErrorResponse(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	tok, err := auth.CreateJWT(db, u)
 	if err != nil {
 		helpers.LogError(err)
-		http.Error(w, "Server Error", http.StatusInternalServerError)
+		c.WriteErrorResponse(w, err, http.StatusInternalServerError)
 		return
 	}
 	resp := make(dto.ResponseData)

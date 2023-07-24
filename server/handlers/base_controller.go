@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/vavilen84/nft-project/dto"
 	"github.com/vavilen84/nft-project/helpers"
+	"github.com/vavilen84/nft-project/validation"
 	"net/http"
 )
 
@@ -21,20 +22,20 @@ func (*BaseController) WriteErrorResponse(w http.ResponseWriter, err error, stat
 	resp := dto.Response{}
 	helpers.LogError(err)
 	ok := false
-	//errs, ok := err.(validation.Errors)
+	errs, ok := err.(validation.Errors)
 	if ok {
-		//formErrors := make(map[string][]string)
-		//for field, fieldErrors := range errs {
-		//	fieldErrMsgs := make([]string, 0)
-		//	for _, v := range fieldErrors {
-		//		fieldErrMsgs = append(fieldErrMsgs, v.Message)
-		//	}
-		//	formErrors[field] = fieldErrMsgs
-		//}
-		//resp = dto.Response{
-		//	FormErrors: formErrors,
-		//	Status:     status,
-		//}
+		formErrors := make(map[string][]string)
+		for field, fieldErrors := range errs {
+			fieldErrMsgs := make([]string, 0)
+			for _, v := range fieldErrors {
+				fieldErrMsgs = append(fieldErrMsgs, v.Message)
+			}
+			formErrors[field] = fieldErrMsgs
+		}
+		resp = dto.Response{
+			FormErrors: formErrors,
+			Status:     status,
+		}
 	} else {
 		resp = dto.Response{
 			Error:  err.Error(),
@@ -50,12 +51,13 @@ func writeResponse(w http.ResponseWriter, resp dto.Response, status int) {
 		helpers.LogError(e)
 		return
 	}
-	_, e = w.Write(b)
-	if e != nil {
-		helpers.LogError(e)
-		return
-	}
 	setCacheHeaders(w)
 	setContentTypeHeader(w)
 	w.WriteHeader(status)
+	_, err := w.Write(b)
+	if err != nil {
+		helpers.LogError(err)
+		http.Error(w, "Server Error", http.StatusInternalServerError)
+		return
+	}
 }

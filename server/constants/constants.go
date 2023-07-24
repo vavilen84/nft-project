@@ -23,11 +23,11 @@ const (
 	// TODO: replace with real domain
 	ResetPasswordSubject            = "Benny.com: reset forgotten password"
 	ResetPasswordHtmlBodyFormat     = "In order to reset your password, please forward this link %s"
-	EmailVerificationHtmlBodyFormat = "Please, verify your email by forwarding this link %s"
+	EmailVerificationHtmlBodyFormat = "Please, verify your email by forwarding this link <a href='%s'>Verify Email</a>"
 	EmailCharSet                    = "UTF-8"
 
 	// TODO: replace with real domen
-	NoReplySenderEmail = "benny.com"
+	NoReplySenderEmail = "no-reply@beenny.com"
 
 	//common
 	SqlDsnFormat = `%s:%s@tcp(%s:%s)/%s`

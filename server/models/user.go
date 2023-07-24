@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"github.com/anaskhan96/go-password-encoder"
 	"github.com/go-playground/validator/v10"
 	"github.com/vavilen84/nft-project/constants"
@@ -9,10 +8,7 @@ import (
 	"github.com/vavilen84/nft-project/validation"
 	"gorm.io/gorm"
 	"log"
-	"reflect"
-	"regexp"
 	"time"
-	"unicode/utf8"
 )
 
 const alphaNumericRegexString = "^[a-zA-Z0-9]+$"
@@ -29,33 +25,6 @@ type User struct {
 	Role                       int        `json:"role" column:"role"`
 	IsEmailVerified            bool       `json:"is_email_verified" column:"is_email_verified"`
 	EmailTwoFaCode             string     `json:"email_two_fa_code" column:"email_two_fa_code"`
-}
-
-func CustomFutureValidator(fl validator.FieldLevel) bool {
-	if fl.Field().Type() != reflect.TypeOf(time.Time{}) {
-		return false
-	}
-	timeValue, ok := fl.Field().Interface().(time.Time)
-	if !ok {
-		return false
-	}
-	if timeValue.After(time.Now()) {
-		return true
-	}
-	return false
-}
-
-func CustomPasswordValidator(fl validator.FieldLevel) bool {
-	p := fl.Field().String()
-	length := utf8.RuneCountInString(p)
-	if length < 8 {
-		return false
-	}
-	r, err := regexp.Match(alphaNumericRegexString, []byte(p))
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	return r
 }
 
 func (m *User) TableName() string {

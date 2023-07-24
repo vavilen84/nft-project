@@ -25,7 +25,7 @@ func GetDefaultDBContext() context.Context {
 	return ctx
 }
 
-func processInitDb(sqlServerDsn, mysqlDbName, DbDsn string) (db *gorm.DB) {
+func processInitDb(DbDsn string) (db *gorm.DB) {
 	db, err := gorm.Open(mysql.Open(DbDsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to database: " + err.Error())

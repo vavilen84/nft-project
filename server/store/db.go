@@ -18,8 +18,6 @@ func GetDB() *gorm.DB {
 }
 
 func initDb() *gorm.DB {
-	sqlServerDsn := os.Getenv("SQL_DSN")
-	mysqlDbName := os.Getenv("MYSQL_DATABASE")
 	DbDsn := os.Getenv("DB_SQL_DSN")
-	return processInitDb(sqlServerDsn, mysqlDbName, DbDsn)
+	return processInitDb(DbDsn)
 }

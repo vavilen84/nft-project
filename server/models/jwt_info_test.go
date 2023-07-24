@@ -82,3 +82,28 @@ func TestInsertJWTInfo(t *testing.T) {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
 }
+
+func Test_FindJWTInfoById(t *testing.T) {
+	customMatcher := CustomMatcher{}
+	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+	gormDB, err := gorm.Open(mysql.New(mysql.Config{
+		SkipInitializeWithVersion: true,
+		Conn:                      db,
+	}), &gorm.Config{})
+
+	columns := []string{"id"}
+	mock.ExpectQuery("SELECT * FROM `jwt_info`").
+		WithArgs(int64(1)).
+		WillReturnRows(sqlmock.NewRows(columns).FromCSVString("1"))
+
+	_, err = FindJWTInfoById(gormDB, 1)
+	assert.Nil(t, err)
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}

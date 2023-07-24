@@ -254,7 +254,7 @@ func TestUser_CreateScenario_2FaCodeValidation(t *testing.T) {
 	if !ok {
 		log.Fatalln("can not assert validation.Errors")
 	}
-	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "User", "Email2FaCode"), v["Email2FaCode"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "User", "EmailTwoFaCode"), v["EmailTwoFaCode"][0].Message)
 
 	m.EmailTwoFaCode = "123456"
 	err = InsertUser(gormDB, &m)
@@ -264,7 +264,7 @@ func TestUser_CreateScenario_2FaCodeValidation(t *testing.T) {
 	}
 
 	// no error
-	_, ok = v["Email2FaCode"]
+	_, ok = v["EmailTwoFaCode"]
 	assert.False(t, ok)
 
 	if err := mock.ExpectationsWereMet(); err != nil {

@@ -65,12 +65,12 @@ func (m *User) TableName() string {
 func (User) GetValidationRules() interface{} {
 	return validation.ScenarioRules{
 		constants.ScenarioCreate: validation.FieldRules{
-			"Email":        "min=3,max=255,email,required",
-			"Nickname":     "min=3,max=255,required",
-			"Password":     "min=8,max=5000,required,customPasswordValidator",
-			"BillingPlan":  "required,gt=0,lt=4",
-			"Role":         "required,gt=0,lt=2", // we can create only users, admin should be created separately
-			"Email2FaCode": "required",
+			"Email":          "min=3,max=255,email,required",
+			"Nickname":       "min=3,max=255,required",
+			"Password":       "min=8,max=5000,required,customPasswordValidator",
+			"BillingPlan":    "required,gt=0,lt=4",
+			"Role":           "required,gt=0,lt=2", // we can create only users, admin should be created separately
+			"EmailTwoFaCode": "required",
 		},
 		constants.ScenarioHashPassword: validation.FieldRules{
 			"Password":     "min=8,max=5000,required,customPasswordValidator",
@@ -88,7 +88,7 @@ func (User) GetValidationRules() interface{} {
 		},
 		constants.ScenarioVerifyEmail: validation.FieldRules{
 			"IsEmailVerified": "eq=true",
-			"Email2FaCode":    "eq=",
+			"EmailTwoFaCode":  "eq=",
 		},
 	}
 }

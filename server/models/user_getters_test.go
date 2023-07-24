@@ -33,7 +33,7 @@ func TestUser_FindUserById(t *testing.T) {
 	}
 }
 
-func TestUser_FindUserBy2FAToken(t *testing.T) {
+func TestUser_FindUserByTwoFAToken(t *testing.T) {
 	customMatcher := CustomMatcher{}
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(customMatcher))
 	if err != nil {
@@ -45,7 +45,7 @@ func TestUser_FindUserBy2FAToken(t *testing.T) {
 		Conn:                      db,
 	}), &gorm.Config{})
 
-	columns := []string{"email_2fa_code"}
+	columns := []string{"email_two_fa_code"}
 	mock.ExpectQuery("SELECT * FROM `user`").
 		WithArgs("token").
 		WillReturnRows(sqlmock.NewRows(columns).FromCSVString("token"))

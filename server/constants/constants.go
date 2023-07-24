@@ -43,9 +43,11 @@ const (
 	EmailTag                   = "email"
 	GreaterThanTag             = "gt"
 	LowerThanTag               = "lt"
+	EqTag                      = "eq"
 	CustomPasswordValidatorTag = "customPasswordValidator"
 
 	// validation error messages
+	EqErrorMsg                         = "%s resource: '%s' should be %s"
 	RequiredErrorMsg                   = "%s resource: '%s' is required"
 	MinValueErrorMsg                   = "%s resource: '%s' min value is %s"
 	MaxValueErrorMsg                   = "%s resource: '%s' max value is %s"

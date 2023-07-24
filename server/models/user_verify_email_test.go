@@ -1,10 +1,14 @@
 package models
 
 import (
+	"fmt"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/vavilen84/nft-project/constants"
+	"github.com/vavilen84/nft-project/validation"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"log"
 	"testing"
 )
 
@@ -23,7 +27,24 @@ func TestUser_SetUserEmailVerified(t *testing.T) {
 	mock.ExpectExec("UPDATE user").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	m := User{}
+	// should be error
+	m := User{
+		Email2FaCode: "somevalue",
+	}
+	err = SetUserEmailVerified(gormDB, &m)
+	v, ok := err.(validation.Errors)
+	if !ok {
+		log.Fatalln("can not assert validation.Errors")
+	}
+	assert.Equal(t, fmt.Sprintf(constants.EqErrorMsg, "User", "IsEmailVerified", "true"), v["IsEmailVerified"][0].Message)
+	assert.Equal(t, fmt.Sprintf(constants.EqErrorMsg, "User", "Email2FaCode", ""), v["Email2FaCode"][0].Message)
+
+	// no error
+
+	m = User{
+		IsEmailVerified: true,
+		Email2FaCode:    "",
+	}
 	err = SetUserEmailVerified(gormDB, &m)
 	assert.Nil(t, err)
 

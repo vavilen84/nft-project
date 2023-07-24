@@ -44,9 +44,11 @@ const (
 	GreaterThanTag             = "gt"
 	LowerThanTag               = "lt"
 	EqTag                      = "eq"
+	FutureTag                  = "customFutureValidator"
 	CustomPasswordValidatorTag = "customPasswordValidator"
 
 	// validation error messages
+	FutureErrorMsg                     = "%s resource: '%s' should be in the future"
 	EqErrorMsg                         = "%s resource: '%s' should be %s"
 	RequiredErrorMsg                   = "%s resource: '%s' is required"
 	MinValueErrorMsg                   = "%s resource: '%s' min value is %s"

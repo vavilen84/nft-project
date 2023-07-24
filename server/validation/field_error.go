@@ -20,6 +20,8 @@ func (s *FieldError) setErrorMessage() {
 		s.Message = fmt.Sprintf(constants.RequiredErrorMsg, s.Name, s.Field)
 	case constants.EqTag:
 		s.Message = fmt.Sprintf(constants.EqErrorMsg, s.Name, s.Field, s.Param)
+	case constants.FutureTag:
+		s.Message = fmt.Sprintf(constants.FutureErrorMsg, s.Name, s.Field)
 	case constants.MinTag:
 		s.Message = fmt.Sprintf(constants.MinValueErrorMsg, s.Name, s.Field, s.Param)
 	case constants.MaxTag:

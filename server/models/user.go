@@ -9,6 +9,7 @@ import (
 	"github.com/vavilen84/nft-project/validation"
 	"gorm.io/gorm"
 	"log"
+	"reflect"
 	"regexp"
 	"time"
 	"unicode/utf8"
@@ -28,6 +29,20 @@ type User struct {
 	Role                       int        `json:"role" column:"role"`
 	IsEmailVerified            bool       `json:"is_email_verified" column:"is_email_verified"`
 	Email2FaCode               string     `json:"email_2fa_code" column:"email_2fa_code"`
+}
+
+func CustomFutureValidator(fl validator.FieldLevel) bool {
+	if fl.Field().Type() != reflect.TypeOf(time.Time{}) {
+		return false
+	}
+	timeValue, ok := fl.Field().Interface().(time.Time)
+	if !ok {
+		return false
+	}
+	if timeValue.After(time.Now()) {
+		return true
+	}
+	return false
 }
 
 func CustomPasswordValidator(fl validator.FieldLevel) bool {
@@ -63,7 +78,7 @@ func (User) GetValidationRules() interface{} {
 		},
 		constants.ScenarioForgotPassword: validation.FieldRules{
 			"PasswordResetToken":         "min=3,max=5000,required",
-			"PasswordResetTokenExpireAt": "required,future",
+			"PasswordResetTokenExpireAt": "required,customFutureValidator",
 		},
 		constants.ScenarioChangePassword: validation.FieldRules{
 			"Password": "min=8,max=5000,required,customPasswordValidator",
@@ -81,6 +96,11 @@ func (User) GetValidationRules() interface{} {
 func (User) GetValidator() interface{} {
 	v := validator.New()
 	err := v.RegisterValidation("customPasswordValidator", CustomPasswordValidator)
+	if err != nil {
+		helpers.LogError(err)
+		return nil
+	}
+	err = v.RegisterValidation("customFutureValidator", CustomFutureValidator)
 	if err != nil {
 		helpers.LogError(err)
 		return nil

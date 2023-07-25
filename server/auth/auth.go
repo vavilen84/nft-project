@@ -9,6 +9,7 @@ import (
 	"github.com/vavilen84/nft-project/models"
 	"gorm.io/gorm"
 	"regexp"
+	"strings"
 	"time"
 )
 
@@ -66,11 +67,13 @@ func ParseJWTPayload(token []byte) (jwtPayload JWTPayload, err error) {
 	}
 	matches := re.FindStringSubmatch(string(token))
 	i := re.SubexpIndex("payload")
-	payloadData, err := base64.StdEncoding.DecodeString(matches[i])
-	if err != nil {
-		helpers.LogError(err)
+	decodedBytes, _ := base64.StdEncoding.DecodeString(matches[i])
+	// undefined bug - decode doesnt see endong } in json
+	decodedString := string(decodedBytes)
+	if !strings.HasSuffix(decodedString, "}") {
+		decodedString += "}"
 	}
-	err = json.Unmarshal(payloadData, &jwtPayload)
+	err = json.Unmarshal([]byte(decodedString), &jwtPayload)
 	if err != nil {
 		helpers.LogError(err)
 	}

@@ -28,10 +28,10 @@ type TestRegisterResp struct {
 }
 
 func TestRegister_OK(t *testing.T) {
-	db := store.GetDB()
 
 	ts := initApp()
 	defer ts.Close()
+	db := store.GetDB()
 	registerResp, email, _ := registerUser(t, ts)
 
 	isValid, err := auth.VerifyJWT(db, []byte(registerResp.Data.Token))

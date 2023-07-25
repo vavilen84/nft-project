@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"github.com/go-chi/chi/v5"
 	"github.com/vavilen84/nft-project/constants"
 	"github.com/vavilen84/nft-project/dto"
 	"github.com/vavilen84/nft-project/helpers"
@@ -13,7 +12,9 @@ import (
 )
 
 func (c *SecurityController) VerifyEmail(w http.ResponseWriter, r *http.Request) {
-	token := chi.URLParam(r, "token")
+	params := r.URL.Query()
+	token := params.Get("token")
+
 	db := store.GetDB()
 	u, err := models.FindUserByTwoFAToken(db, token)
 	if err != nil {

@@ -16,7 +16,7 @@ func TestVerifyEmail_OK(t *testing.T) {
 	ts := initApp()
 	defer ts.Close()
 
-	registerResp := registerUser(t, ts)
+	registerResp, _, _ := registerUser(t, ts)
 	jwtPayload, err := auth.ParseJWTPayload([]byte(registerResp.Data.Token))
 	if err != nil {
 		log.Fatal(err)

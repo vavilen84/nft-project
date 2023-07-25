@@ -21,6 +21,7 @@ const (
 
 	// email
 	// TODO: replace with real domain
+	EmailVerificationSubject        = "Benny.com: email verification"
 	ResetPasswordSubject            = "Benny.com: reset forgotten password"
 	ResetPasswordHtmlBodyFormat     = "In order to reset your password, please forward this link %s"
 	EmailVerificationHtmlBodyFormat = "Please, verify your email by forwarding this link <a href='%s'>Verify Email</a>"

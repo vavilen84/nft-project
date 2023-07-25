@@ -5,7 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"github.com/vavilen84/nft-project/auth"
 	"github.com/vavilen84/nft-project/dto"
+	"github.com/vavilen84/nft-project/models"
+	"github.com/vavilen84/nft-project/store"
 	"io"
 	"log"
 	"net/http"
@@ -25,9 +28,34 @@ type TestRegisterResp struct {
 }
 
 func TestRegister_OK(t *testing.T) {
+	db := store.GetDB()
+
 	ts := initApp()
 	defer ts.Close()
-	registerUser(t, ts)
+	registerResp, email, _ := registerUser(t, ts)
+
+	isValid, err := auth.VerifyJWT(db, []byte(registerResp.Data.Token))
+	if err != nil || registerResp.Data.Token == "" || !isValid {
+		log.Fatalln(err)
+	}
+
+	jwtPayload, err := auth.ParseJWTPayload([]byte(registerResp.Data.Token))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	assert.NotEmpty(t, jwtPayload.JWTInfoId)
+
+	jwtInfo, err := models.FindJWTInfoById(db, jwtPayload.JWTInfoId)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	userByJWTInfo, err := models.FindUserById(db, jwtInfo.UserId)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	assert.Equal(t, userByJWTInfo.Email, email)
 }
 
 func TestRegister_NotOK(t *testing.T) {

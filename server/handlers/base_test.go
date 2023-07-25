@@ -36,7 +36,7 @@ func initApp() *httptest.Server {
 	return ts
 }
 
-func registerUser(t *testing.T, ts *httptest.Server) *TestRegisterResp {
+func registerUser(t *testing.T, ts *httptest.Server) (*TestRegisterResp, string, string) {
 	email := "vladimir.teplov@gmail.com"
 	password := "12345678"
 	body := dto.SignUp{
@@ -64,14 +64,14 @@ func registerUser(t *testing.T, ts *httptest.Server) *TestRegisterResp {
 	responseBody, err := io.ReadAll(res.Body)
 	if err != nil {
 		fmt.Println("Error reading response body:", err)
-		return nil
+		return nil, "", ""
 	}
 
 	registerResp := TestRegisterResp{}
 	err = json.Unmarshal(responseBody, &registerResp)
 	if err != nil {
 		fmt.Println("Error reading response body:", err)
-		return nil
+		return nil, "", ""
 	}
 
 	if res.StatusCode != http.StatusOK {
@@ -85,5 +85,5 @@ func registerUser(t *testing.T, ts *httptest.Server) *TestRegisterResp {
 	assert.Empty(t, registerResp.Errors)
 	assert.Empty(t, registerResp.FormErrors)
 
-	return &registerResp
+	return &registerResp, email, password
 }

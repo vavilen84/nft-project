@@ -38,7 +38,7 @@ func SendEmailVerificationMail(recipient, token string) error {
 	return sendEmail(
 		recipient,
 		constants.NoReplySenderEmail,
-		constants.ResetPasswordSubject,
+		constants.EmailVerificationSubject,
 		link,
 	)
 }

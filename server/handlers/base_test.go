@@ -37,10 +37,12 @@ func initApp() *httptest.Server {
 }
 
 func registerUser(t *testing.T, ts *httptest.Server) *TestRegisterResp {
+	email := "vladimir.teplov@gmail.com"
+	password := "12345678"
 	body := dto.SignUp{
 		Nickname:    "test_" + helpers.GenerateRandomString(5),
-		Email:       "vladimir.teplov@gmail.com",
-		Password:    "12345678",
+		Email:       email,
+		Password:    password,
 		BillingPlan: constants.FreeBillingPlan,
 	}
 	bodyBytes, err := json.Marshal(body)

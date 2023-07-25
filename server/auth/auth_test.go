@@ -2,6 +2,7 @@ package auth
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"log"
 	"testing"
 )
@@ -13,4 +14,7 @@ func TestParseJWTToken(t *testing.T) {
 		log.Fatalln(err)
 	}
 	fmt.Print(jwtPayload)
+	assert.Equal(t, jwtPayload.JWTInfoId, 15)
+	assert.NotEmpty(t, jwtPayload.Payload.ExpirationTime)
+	assert.NotEmpty(t, jwtPayload.Payload.IssuedAt)
 }

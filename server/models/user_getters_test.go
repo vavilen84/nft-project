@@ -50,7 +50,7 @@ func TestUser_FindUserByTwoFAToken(t *testing.T) {
 		WithArgs("token").
 		WillReturnRows(sqlmock.NewRows(columns).FromCSVString("token"))
 
-	_, err = FindUserBy2FAToken(gormDB, "token")
+	_, err = FindUserByTwoFAToken(gormDB, "token")
 	assert.Nil(t, err)
 
 	if err := mock.ExpectationsWereMet(); err != nil {

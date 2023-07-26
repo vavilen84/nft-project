@@ -59,6 +59,9 @@ func (User) GetValidationRules() interface{} {
 			"IsEmailVerified": "eq=true",
 			"EmailTwoFaCode":  "eq=",
 		},
+		constants.ScenarioLoginTwoFaStepOne: validation.FieldRules{
+			"EmailTwoFaCode": "min=6,max=6,required",
+		},
 	}
 }
 
@@ -104,6 +107,16 @@ func ForgotPassword(db *gorm.DB, m *User) (err error) {
 	}
 	sql := "UPDATE user SET password_reset_token = ?, password_reset_token_expire_at = ? WHERE id = ?"
 	return db.Exec(sql, m.PasswordResetToken, m.PasswordResetTokenExpireAt, m.Id).Error
+}
+
+func SetEmailTwoFaCode(db *gorm.DB, m *User) (err error) {
+	err = validation.ValidateByScenario(constants.ScenarioLoginTwoFaStepOne, *m)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	sql := "UPDATE user SET email_two_fa_code = ? WHERE id = ?"
+	return db.Exec(sql, m.EmailTwoFaCode, m.Id).Error
 }
 
 func SetUserEmailVerified(db *gorm.DB, m *User) (err error) {

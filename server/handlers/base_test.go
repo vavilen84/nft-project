@@ -117,8 +117,6 @@ func registerUser(t *testing.T, ts *httptest.Server) (*TestRegisterResp, string,
 
 func loginUser(t *testing.T, ts *httptest.Server, email, password string) string {
 
-	registerResp, email, password := registerUser(t, ts)
-
 	body := dto.Login{
 		Email:    email,
 		Password: password,
@@ -128,7 +126,7 @@ func loginUser(t *testing.T, ts *httptest.Server, email, password string) string
 		log.Fatal(err)
 	}
 
-	req, err := http.NewRequest(http.MethodGet, ts.URL+"/api/v1/security/login", bytes.NewReader(bodyBytes))
+	req, err := http.NewRequest(http.MethodPost, ts.URL+"/api/v1/security/login", bytes.NewReader(bodyBytes))
 	if err != nil {
 		t.Fatalf("Failed to create request: %v", err)
 	}
@@ -154,14 +152,14 @@ func loginUser(t *testing.T, ts *httptest.Server, email, password string) string
 		t.Errorf("Expected status code %d but got %d", http.StatusOK, res.StatusCode)
 	}
 
-	assert.Equal(t, registerResp.Status, http.StatusOK)
-	assert.NotEmpty(t, registerResp.Data.Token)
-	assert.Empty(t, registerResp.Error)
-	assert.Empty(t, registerResp.Error)
-	assert.Empty(t, registerResp.Errors)
-	assert.Empty(t, registerResp.FormErrors)
+	assert.Equal(t, loginResp.Status, http.StatusOK)
+	assert.NotEmpty(t, loginResp.Data.Token)
+	assert.Empty(t, loginResp.Error)
+	assert.Empty(t, loginResp.Error)
+	assert.Empty(t, loginResp.Errors)
+	assert.Empty(t, loginResp.FormErrors)
 
-	return registerResp.Data.Token
+	return loginResp.Data.Token
 }
 
 func checkToken(t *testing.T, db *gorm.DB, token string) *models.User {

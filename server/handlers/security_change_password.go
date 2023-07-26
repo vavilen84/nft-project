@@ -54,7 +54,7 @@ func (c *SecurityController) ChangePassword(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	u, err := models.FindUserByEmail(db, jwtInfo.User.Email)
+	u, err := models.FindUserById(db, jwtInfo.UserId)
 	if err != nil {
 		helpers.LogError(err)
 		if err == gorm.ErrRecordNotFound {

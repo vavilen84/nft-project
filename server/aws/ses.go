@@ -43,6 +43,20 @@ func SendEmailVerificationMail(recipient, token string) error {
 	)
 }
 
+func SendLoginTwoFaCode(recipient, token string) error {
+	// TODO: replace with real domain
+	link := fmt.Sprintf(
+		constants.EmailVerificationHtmlBodyFormat,
+		os.Getenv("DOMAIN")+"/verify-email&token="+token,
+	)
+	return sendEmail(
+		recipient,
+		constants.NoReplySenderEmail,
+		constants.EmailVerificationSubject,
+		link,
+	)
+}
+
 func sendEmail(recipient, sender, subject, htmlBody string) error {
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(os.Getenv("AWS_REGION")),

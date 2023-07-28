@@ -128,15 +128,20 @@ func registerUser(t *testing.T, ts *httptest.Server) (*TestRegisterResp, string,
 }
 
 func loginUser(t *testing.T, ts *httptest.Server, email, password string) string {
-	twoFaTok := twoFaLoginFirstStep(t, ts, email)
-	jwtTok := twoFaLoginSecondStep(t, ts, twoFaTok, password)
+	twoFaLoginFirstStep(t, ts, email)
+	jwtTok := twoFaLoginSecondStep(t, ts, email, password)
 	return jwtTok
 }
 
-func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server, twoFaTok, password string) (jwtToken string) {
+func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server, email, password string) (jwtToken string) {
+	db := store.GetDB()
+	u, err := models.FindUserByEmail(db, email)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	body := dto.TwoFaLoginStepTwo{
-		EmailTwoFaCode: twoFaTok,
+		EmailTwoFaCode: u.EmailTwoFaCode,
 		Password:       password,
 	}
 	bodyBytes, err := json.Marshal(body)
@@ -180,7 +185,7 @@ func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server, twoFaTok, password 
 	return twoFaLoginSecondStep.Data.Token
 }
 
-func twoFaLoginFirstStep(t *testing.T, ts *httptest.Server, email string) (jwtToken string) {
+func twoFaLoginFirstStep(t *testing.T, ts *httptest.Server, email string) {
 
 	body := dto.TwoFaLoginFirstStep{
 		Email: email,
@@ -217,13 +222,11 @@ func twoFaLoginFirstStep(t *testing.T, ts *httptest.Server, email string) (jwtTo
 	}
 
 	assert.Equal(t, twoFaLoginStepFirst.Status, http.StatusOK)
-	assert.NotEmpty(t, twoFaLoginStepFirst.Data.Token)
+	assert.Empty(t, twoFaLoginStepFirst.Data.Token)
 	assert.Empty(t, twoFaLoginStepFirst.Error)
 	assert.Empty(t, twoFaLoginStepFirst.Error)
 	assert.Empty(t, twoFaLoginStepFirst.Errors)
 	assert.Empty(t, twoFaLoginStepFirst.FormErrors)
-
-	return twoFaLoginStepFirst.Data.Token
 }
 
 func checkToken(t *testing.T, db *gorm.DB, token string) *models.User {

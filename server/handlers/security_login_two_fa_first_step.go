@@ -60,5 +60,6 @@ func (c *SecurityController) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := make(dto.ResponseData)
+	resp["token"] = string(token)
 	c.WriteSuccessResponse(w, resp, http.StatusOK)
 }

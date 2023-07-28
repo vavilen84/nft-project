@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/go-playground/validator/v10"
 	"github.com/vavilen84/nft-project/auth"
 	"github.com/vavilen84/nft-project/aws"
 	"github.com/vavilen84/nft-project/constants"
@@ -26,7 +25,7 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
-	validate := validator.New()
+	validate := dto.GetValidator()
 	err = validate.Struct(dtoModel)
 	if err != nil {
 		helpers.LogError(err)

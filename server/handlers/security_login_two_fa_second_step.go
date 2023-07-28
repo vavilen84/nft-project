@@ -24,7 +24,7 @@ func (c *SecurityController) TwoFaLoginStepTwo(w http.ResponseWriter, r *http.Re
 		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
-	validate := validator.New()
+	validate := dto.GetValidator()
 	err = validate.Struct(dtoModel)
 	if err != nil {
 		helpers.LogError(err)

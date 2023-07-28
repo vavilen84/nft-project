@@ -34,7 +34,7 @@ func CustomPasswordValidator(fl validator.FieldLevel) bool {
 	return r
 }
 
-func GetValidator() interface{} {
+func GetValidator() *validator.Validate {
 	v := validator.New()
 	err := v.RegisterValidation("customPasswordValidator", CustomPasswordValidator)
 	if err != nil {

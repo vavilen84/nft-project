@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"github.com/go-playground/validator/v10"
 	"github.com/vavilen84/nft-project/constants"
 	"github.com/vavilen84/nft-project/dto"
 	"github.com/vavilen84/nft-project/helpers"
@@ -22,7 +21,7 @@ func (c *SecurityController) ResetPassword(w http.ResponseWriter, r *http.Reques
 		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
-	validate := validator.New()
+	validate := dto.GetValidator()
 	err = validate.Struct(dtoModel)
 	if err != nil {
 		helpers.LogError(err)

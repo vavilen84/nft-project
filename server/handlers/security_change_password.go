@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/anaskhan96/go-password-encoder"
-	"github.com/go-playground/validator/v10"
 	"github.com/vavilen84/nft-project/auth"
 	"github.com/vavilen84/nft-project/constants"
 	"github.com/vavilen84/nft-project/dto"
@@ -33,7 +32,7 @@ func (c *SecurityController) ChangePassword(w http.ResponseWriter, r *http.Reque
 		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
-	validate := validator.New()
+	validate := dto.GetValidator()
 	err = validate.Struct(dtoModel)
 	if err != nil {
 		helpers.LogError(err)

@@ -51,6 +51,7 @@ func BuildV1Paths() *chi.Mux {
 		c := SecurityController{}
 		r.Post("/login", c.Login)
 		r.Post("/two-fa-login-step-one", c.TwoFaLoginStepOne)
+		r.Post("/two-fa-login-step-two", c.TwoFaLoginStepTwo)
 		r.Post("/register", c.Register)
 		r.Post("/forgot-password", c.ForgotPassword)
 		r.Post("/reset-password", c.ResetPassword)

@@ -46,13 +46,13 @@ func SendEmailVerificationMail(recipient, token string) error {
 func SendLoginTwoFaCode(recipient, token string) error {
 	// TODO: replace with real domain
 	link := fmt.Sprintf(
-		constants.EmailVerificationHtmlBodyFormat,
-		os.Getenv("DOMAIN")+"/verify-email&token="+token,
+		constants.LoginTwoFaCodeHtmlBodyFormat,
+		os.Getenv("DOMAIN")+"/two-fa-login-step-two&token="+token,
 	)
 	return sendEmail(
 		recipient,
 		constants.NoReplySenderEmail,
-		constants.EmailVerificationSubject,
+		constants.TwoFaLoginSubject,
 		link,
 	)
 }

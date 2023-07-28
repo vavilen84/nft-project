@@ -21,11 +21,12 @@ const (
 
 	// email
 	// TODO: replace with real domain
+	TwoFaLoginSubject               = "Benny.com: 2FA login verification"
 	EmailVerificationSubject        = "Benny.com: email verification"
 	ResetPasswordSubject            = "Benny.com: reset forgotten password"
 	ResetPasswordHtmlBodyFormat     = "In order to reset your password, please forward this link %s"
 	EmailVerificationHtmlBodyFormat = "Please, verify your email by forwarding this link <a href='%s'>Verify Email</a>"
-	LoginTwoFaCodeHtmlBodyFormat    = "Please, verify forward this link in order to login <a href='%s'>Login</a>"
+	LoginTwoFaCodeHtmlBodyFormat    = "Please, forward this link in order to login <a href='%s'>Login</a>"
 	EmailCharSet                    = "UTF-8"
 
 	// TODO: replace with real domen

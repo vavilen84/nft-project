@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"github.com/go-playground/validator/v10"
 	"github.com/vavilen84/nft-project/auth"
 	"github.com/vavilen84/nft-project/aws"
 	"github.com/vavilen84/nft-project/constants"
@@ -90,7 +89,7 @@ func (c *SecurityController) TwoFaLoginStepOne(w http.ResponseWriter, r *http.Re
 		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
-	validate := validator.New()
+	validate := dto.GetValidator()
 	err = validate.Struct(dtoModel)
 	if err != nil {
 		helpers.LogError(err)

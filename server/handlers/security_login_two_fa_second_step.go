@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/vavilen84/nft-project/auth"
-	"github.com/vavilen84/nft-project/aws"
 	"github.com/vavilen84/nft-project/constants"
 	"github.com/vavilen84/nft-project/dto"
 	"github.com/vavilen84/nft-project/helpers"
@@ -44,27 +43,10 @@ func (c *SecurityController) TwoFaLoginStepTwo(w http.ResponseWriter, r *http.Re
 	}
 
 	u.EmailTwoFaCode = ""
-	err = models.SetEmailTwoFaCode(db, u)
+	err = models.ResetEmailTwoFaCode(db, u)
 	if err != nil {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
-		return
-	}
-
-	token := helpers.GenerateRandomString(6)
-	u.EmailTwoFaCode = token
-
-	err = models.SetEmailTwoFaCode(db, u)
-	if err != nil {
-		helpers.LogError(err)
-		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
-		return
-	}
-
-	err = aws.SendLoginTwoFaCode(u.Email, token)
-	if err != nil {
-		helpers.LogError(err)
-		c.WriteErrorResponse(w, err, http.StatusInternalServerError)
 		return
 	}
 

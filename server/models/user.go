@@ -119,6 +119,11 @@ func SetEmailTwoFaCode(db *gorm.DB, m *User) (err error) {
 	return db.Exec(sql, m.EmailTwoFaCode, m.Id).Error
 }
 
+func ResetEmailTwoFaCode(db *gorm.DB, m *User) (err error) {
+	sql := "UPDATE user SET email_two_fa_code = '' WHERE id = ?"
+	return db.Exec(sql, m.Id).Error
+}
+
 func SetUserEmailVerified(db *gorm.DB, m *User) (err error) {
 	err = validation.ValidateByScenario(constants.ScenarioVerifyEmail, *m)
 	if err != nil {

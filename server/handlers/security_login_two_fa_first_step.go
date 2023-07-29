@@ -14,7 +14,7 @@ import (
 	"net/http"
 )
 
-func (c *SecurityController) Login(w http.ResponseWriter, r *http.Request) {
+func (c *SecurityController) TwoFaLoginStepOne(w http.ResponseWriter, r *http.Request) {
 	db := store.GetDB()
 	dec := json.NewDecoder(r.Body)
 	dtoModel := dto.TwoFaLoginFirstStep{}

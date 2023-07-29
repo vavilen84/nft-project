@@ -9,7 +9,6 @@ import (
 	"github.com/vavilen84/nft-project/models"
 	"gorm.io/gorm"
 	"regexp"
-	"strings"
 	"time"
 )
 
@@ -59,25 +58,23 @@ func CreateJWT(db *gorm.DB, u *models.User) (token []byte, err error) {
 	return
 }
 
-func ParseJWTPayload(token []byte) (jwtPayload JWTPayload, err error) {
+func ParseJWTPayload(token []byte) (JWTPayload, error) {
+	jwtPayload := JWTPayload{}
 	re, err := regexp.Compile(`(.*)\.(?P<payload>.*)\.(.*)`)
 	if err != nil {
 		helpers.LogError(err)
-		return
+		return jwtPayload, err
 	}
 	matches := re.FindStringSubmatch(string(token))
 	i := re.SubexpIndex("payload")
-	decodedBytes, _ := base64.StdEncoding.DecodeString(matches[i])
-	// undefined bug - decode doesnt see endong } in json
-	decodedString := string(decodedBytes)
-	if !strings.HasSuffix(decodedString, "}") {
-		decodedString += "}"
-	}
-	err = json.Unmarshal([]byte(decodedString), &jwtPayload)
+	decodedBytes, _ := base64.RawStdEncoding.DecodeString(matches[i])
+	err = json.Unmarshal(decodedBytes, &jwtPayload)
 	if err != nil {
 		helpers.LogError(err)
+		return jwtPayload, err
 	}
-	return
+
+	return jwtPayload, nil
 }
 
 func VerifyJWT(db *gorm.DB, token []byte) (isValid bool, err error) {

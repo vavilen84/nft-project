@@ -75,7 +75,7 @@ func initApp() *httptest.Server {
 }
 
 func registerUser(t *testing.T, ts *httptest.Server) {
-	body := dto.SignUp{
+	body := dto.Register{
 		Nickname:    "test_" + helpers.GenerateRandomString(5),
 		Email:       registerUserEmail,
 		Password:    registerUserPassword,

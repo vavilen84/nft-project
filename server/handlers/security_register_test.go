@@ -23,7 +23,7 @@ func TestRegister_NotOK(t *testing.T) {
 	ts := initApp()
 	defer ts.Close()
 
-	body := dto.SignUp{
+	body := dto.Register{
 		Nickname:    "",
 		Email:       "vladimir.teplovgmail.com",
 		Password:    "1234567",

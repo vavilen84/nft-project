@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/vavilen84/nft-project/aws"
 	"github.com/vavilen84/nft-project/constants"
 	"github.com/vavilen84/nft-project/dto"
 	"github.com/vavilen84/nft-project/helpers"
@@ -56,6 +57,14 @@ func (c *SecurityController) ForgotPassword(w http.ResponseWriter, r *http.Reque
 		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
 		return
 	}
+
+	err = aws.SendResetPasswordEmail(u.Email, token)
+	if err != nil {
+		helpers.LogError(err)
+		c.WriteErrorResponse(w, err, http.StatusInternalServerError)
+		return
+	}
+
 	resp := make(dto.ResponseData)
 	c.WriteSuccessResponse(w, resp, http.StatusOK)
 }

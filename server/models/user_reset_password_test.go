@@ -49,7 +49,7 @@ func TestUser_ResetPassword_passwordValidation(t *testing.T) {
 	mock.ExpectExec("UPDATE user").WillReturnResult(sqlmock.NewResult(1, 1))
 
 	// no error
-	rowValidPassword := "12345678"
+	rowValidPassword := "12345678lT*"
 	m.Password = rowValidPassword
 	err = UserResetPassword(gormDB, &m)
 	assert.Nil(t, err)

@@ -40,7 +40,7 @@ func (User) GetValidationRules() interface{} {
 			"EmailTwoFaCode": "required",
 		},
 		constants.ScenarioHashPassword: validation.FieldRules{
-			"Password":     "min=8,max=5000,required,customPasswordValidator",
+			"Password":     "min=8,max=5000,required",
 			"PasswordSalt": "min=3,max=5000,required",
 		},
 		constants.ScenarioForgotPassword: validation.FieldRules{

@@ -121,7 +121,7 @@ func TestUser_CreateScenario_passwordValidation(t *testing.T) {
 	assert.Equal(t, fmt.Sprintf(constants.CustomPasswordValidatorTagErrorMsg, "User"), v["Password"][0].Message)
 
 	// no error
-	rowValidPassword := "12345678"
+	rowValidPassword := "12345678lT*"
 	m.Password = rowValidPassword
 	err = InsertUser(gormDB, &m)
 	v, ok = err.(validation.Errors)
@@ -292,7 +292,7 @@ func TestUser_CreateScenario_OkInsert(t *testing.T) {
 		BillingPlan:    constants.FreeBillingPlan,
 		Nickname:       "nick",
 		Email:          "valid.email@example.com",
-		Password:       "12345678",
+		Password:       "12345678lT*",
 		Role:           constants.RoleUser,
 		EmailTwoFaCode: "123456",
 	}

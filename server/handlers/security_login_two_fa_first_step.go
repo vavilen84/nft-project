@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/anaskhan96/go-password-encoder"
 	"github.com/vavilen84/nft-project/aws"
 	"github.com/vavilen84/nft-project/constants"
 	"github.com/vavilen84/nft-project/dto"
@@ -40,6 +41,13 @@ func (c *SecurityController) TwoFaLoginStepOne(w http.ResponseWriter, r *http.Re
 		} else {
 			c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)
 		}
+		return
+	}
+
+	passwordIsValid := password.Verify(dtoModel.Password, u.PasswordSalt, u.Password, nil)
+	if !passwordIsValid {
+		helpers.LogError(err)
+		c.WriteErrorResponse(w, constants.UnauthorizedError, http.StatusUnauthorized)
 		return
 	}
 

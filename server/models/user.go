@@ -122,6 +122,11 @@ func ResetEmailTwoFaCode(db *gorm.DB, m *User) (err error) {
 	return db.Exec(sql, m.Id).Error
 }
 
+func ResetResetPasswordToken(db *gorm.DB, m *User) (err error) {
+	sql := "UPDATE user SET password_reset_token = '', password_reset_token_expire_at = NULL WHERE id = ?"
+	return db.Exec(sql, m.Id).Error
+}
+
 func SetUserEmailVerified(db *gorm.DB, m *User) (err error) {
 	err = validation.ValidateByScenario(constants.ScenarioVerifyEmail, *m)
 	if err != nil {
@@ -200,8 +205,8 @@ func FindUserByEmail(db *gorm.DB, email string) (*User, error) {
 func FindUserByResetPasswordToken(db *gorm.DB, token string) (*User, error) {
 	m := User{}
 	err := db.
-		Where("reset_password_token = ?", token).
-		Where("reset_password_token_expire_at > ?", time.Now().Unix()).
+		Where("password_reset_token = ?", token).
+		Where("password_reset_token_expire_at > ?", time.Now().Unix()).
 		First(&m).Error
 	if err != nil {
 		helpers.LogError(err)

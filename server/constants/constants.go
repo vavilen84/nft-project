@@ -74,8 +74,11 @@ const (
 	ScenarioSignIn            = "sign-in"
 	ScenarioHashPassword      = "hash-password"
 	ScenarioForgotPassword    = "forgot-password"
+	ScenarioRegister          = "register"
 	ScenarioLoginTwoFaStepOne = "login-two-fa-step-one"
 	ScenarioChangePassword    = "change-password"
 	ScenarioResetPassword     = "reset-password"
 	ScenarioVerifyEmail       = "verify-email"
+	ScenarioTwoFaLoginStepOne = "two-fa-login-step-one"
+	ScenarioTwoFaLoginStepTwo = "two-fa-login-step-two"
 )

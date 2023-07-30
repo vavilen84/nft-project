@@ -18,7 +18,7 @@ import (
 func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 	db := store.GetDB()
 	dec := json.NewDecoder(r.Body)
-	dtoModel := dto.SignUp{}
+	dtoModel := dto.Register{}
 	err := dec.Decode(&dtoModel)
 	if err != nil {
 		helpers.LogError(err)

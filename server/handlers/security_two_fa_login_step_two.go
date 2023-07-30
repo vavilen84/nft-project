@@ -15,7 +15,7 @@ import (
 
 func (c *SecurityController) TwoFaLoginStepTwo(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
-	dtoModel := dto.TwoFaLoginSecondStep{}
+	dtoModel := dto.TwoFaLoginStepTwo{}
 	err := dec.Decode(&dtoModel)
 	if err != nil {
 		helpers.LogError(err)

@@ -59,7 +59,7 @@ const (
 	EmailErrorMsg                      = "%s resource: email is not valid"
 	GreaterThanTagErrorMsg             = "%s resource: value should be greater than %s"
 	LowerThanTagErrorMsg               = "%s resource: value should be lower than %s"
-	CustomPasswordValidatorTagErrorMsg = "%s resource: value should be alphanumeric and have length at least than 8 symbols"
+	CustomPasswordValidatorTagErrorMsg = "%s resource: password must have: 1 small letter, 1 big letter, 1 special symbol"
 
 	// Server
 	DefaultWriteTimout  = 60 * time.Second

@@ -36,7 +36,7 @@ func (JWTInfo) GetValidationRules() interface{} {
 
 func (JWTInfo) GetValidator() interface{} {
 	v := validator.New()
-	err := v.RegisterValidation("customFutureValidator", CustomFutureValidator)
+	err := v.RegisterValidation("customFutureValidator", validation.CustomFutureValidator)
 	if err != nil {
 		helpers.LogError(err)
 		return nil

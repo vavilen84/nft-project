@@ -29,6 +29,10 @@ func MakeHandler() http.Handler {
 
 func BuildV1Paths() *chi.Mux {
 	r := chi.NewRouter()
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
 	r.Use(cors.Handler(cors.Options{
 		// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
 		AllowedOrigins: []string{"https://*", "http://*"},
@@ -49,12 +53,24 @@ func BuildV1Paths() *chi.Mux {
 	//})
 	r.Route("/security", func(r chi.Router) {
 		c := SecurityController{}
+
+		//r.Route("/protected", func(r chi.Router) {
+		//	r.Use(UserAuth)
+		//	r.Post("/two-fa-login-step-one", c.TwoFaLoginStepOne)
+		//	r.Post("/two-fa-login-step-two", c.TwoFaLoginStepTwo)
+		//	r.Post("/register", c.Register)
+		//	r.Post("/forgot-password", c.ForgotPassword)
+		//	r.Post("/reset-password", c.ResetPassword)
+		//	r.Post("/change-password", c.ChangePassword)
+		//	r.Get("/verify-email", c.VerifyEmail)
+		//})
+
 		r.Post("/two-fa-login-step-one", c.TwoFaLoginStepOne)
 		r.Post("/two-fa-login-step-two", c.TwoFaLoginStepTwo)
 		r.Post("/register", c.Register)
 		r.Post("/forgot-password", c.ForgotPassword)
 		r.Post("/reset-password", c.ResetPassword)
-		r.Post("/change-password", c.ChangePassword)
+		r.With(UserAuth).Post("/change-password", c.ChangePassword)
 		r.Get("/verify-email", c.VerifyEmail)
 	})
 	return r

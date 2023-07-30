@@ -70,13 +70,12 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tok, err := auth.CreateJWT(db, u)
+	_, err = auth.CreateJWT(db, u)
 	if err != nil {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, err, http.StatusInternalServerError)
 		return
 	}
 	resp := make(dto.ResponseData)
-	resp["token"] = string(tok)
 	c.WriteSuccessResponse(w, resp, http.StatusOK)
 }

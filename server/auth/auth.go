@@ -3,6 +3,7 @@ package auth
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"github.com/gbrlsnchs/jwt/v3"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/vavilen84/nft-project/helpers"
@@ -67,6 +68,13 @@ func ParseJWTPayload(token []byte) (JWTPayload, error) {
 	}
 	matches := re.FindStringSubmatch(string(token))
 	i := re.SubexpIndex("payload")
+
+	if len(matches) < i+1 {
+		err = errors.New("Failed to parse JWT token")
+		helpers.LogError(err)
+		return jwtPayload, err
+	}
+
 	decodedBytes, _ := base64.RawStdEncoding.DecodeString(matches[i])
 	err = json.Unmarshal(decodedBytes, &jwtPayload)
 	if err != nil {

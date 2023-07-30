@@ -31,7 +31,7 @@ func (c *SecurityController) ChangePassword(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	u, ok := r.Context().Value("user").(models.User)
+	u, ok := r.Context().Value("user").(*models.User)
 	if !ok {
 		err = errors.New("No logged in user")
 		helpers.LogError(err)
@@ -46,7 +46,7 @@ func (c *SecurityController) ChangePassword(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	u.Password = dtoModel.NewPassword
-	err = models.UserChangePassword(db, &u)
+	err = models.UserChangePassword(db, u)
 	if err != nil {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)

@@ -29,16 +29,12 @@ type TestRegisterResp struct {
 	FormErrors map[string][]string `json:"formErrors"`
 }
 
-type TestTwoFaLoginFirstRespDataToken struct {
-	Token string `json:"token"`
-}
-
 type TestTwoFaLoginFirstResp struct {
-	Status     int                              `json:"status"`
-	Data       TestTwoFaLoginFirstRespDataToken `json:"data"`
-	Error      string                           `json:"error"`
-	Errors     map[string][]string              `json:"errors"`
-	FormErrors map[string][]string              `json:"formErrors"`
+	Status     int                 `json:"status"`
+	Data       interface{}         `json:"data"`
+	Error      string              `json:"error"`
+	Errors     map[string][]string `json:"errors"`
+	FormErrors map[string][]string `json:"formErrors"`
 }
 
 type TestTwoFaLoginSecondRespDataToken struct {
@@ -53,6 +49,7 @@ type TestTwoFaLoginSecondResp struct {
 	FormErrors map[string][]string               `json:"formErrors"`
 }
 
+// TODO: dont use on productiuon - all data between tets will be lost!
 func initApp() *httptest.Server {
 	err := godotenv.Load("../.env")
 	if err != nil {
@@ -71,9 +68,7 @@ func initApp() *httptest.Server {
 	return ts
 }
 
-func registerUser(t *testing.T, ts *httptest.Server) (*TestRegisterResp, string, string) {
-	email := "vladimir.teplov@gmail.com"
-	password := "12345678"
+func registerUser(t *testing.T, ts *httptest.Server, email, password string) {
 	body := dto.SignUp{
 		Nickname:    "test_" + helpers.GenerateRandomString(5),
 		Email:       email,
@@ -98,15 +93,13 @@ func registerUser(t *testing.T, ts *httptest.Server) (*TestRegisterResp, string,
 
 	responseBody, err := io.ReadAll(res.Body)
 	if err != nil {
-		fmt.Println("Error reading response body:", err)
-		return nil, "", ""
+		t.Fatalf("Error reading response body: %v", err)
 	}
 
 	registerResp := TestRegisterResp{}
 	err = json.Unmarshal(responseBody, &registerResp)
 	if err != nil {
-		fmt.Println("Error reading response body:", err)
-		return nil, "", ""
+		t.Fatalf("Error reading response body: %v", err)
 	}
 
 	if res.StatusCode != http.StatusOK {
@@ -119,26 +112,23 @@ func registerUser(t *testing.T, ts *httptest.Server) (*TestRegisterResp, string,
 	assert.Empty(t, registerResp.Error)
 	assert.Empty(t, registerResp.Errors)
 	assert.Empty(t, registerResp.FormErrors)
-
-	return &registerResp, email, password
 }
 
 func loginUser(t *testing.T, ts *httptest.Server, email, password string) string {
-	twoFaLoginFirstStep(t, ts, email)
-	jwtTok := twoFaLoginSecondStep(t, ts, email, password)
+	twoFaLoginFirstStep(t, ts, email, password)
+	jwtTok := twoFaLoginSecondStep(t, ts, email)
 	return jwtTok
 }
 
-func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server, email, password string) (jwtToken string) {
+func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server, email string) (jwtToken string) {
 	db := store.GetDB()
 	u, err := models.FindUserByEmail(db, email)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	body := dto.TwoFaLoginStepTwo{
+	body := dto.TwoFaLoginSecondStep{
 		EmailTwoFaCode: u.EmailTwoFaCode,
-		Password:       password,
 	}
 	bodyBytes, err := json.Marshal(body)
 	if err != nil {
@@ -181,10 +171,11 @@ func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server, email, password str
 	return twoFaLoginSecondStep.Data.Token
 }
 
-func twoFaLoginFirstStep(t *testing.T, ts *httptest.Server, email string) {
+func twoFaLoginFirstStep(t *testing.T, ts *httptest.Server, email, password string) {
 
 	body := dto.TwoFaLoginFirstStep{
-		Email: email,
+		Email:    email,
+		Password: password,
 	}
 	bodyBytes, err := json.Marshal(body)
 	if err != nil {
@@ -218,7 +209,7 @@ func twoFaLoginFirstStep(t *testing.T, ts *httptest.Server, email string) {
 	}
 
 	assert.Equal(t, twoFaLoginStepFirst.Status, http.StatusOK)
-	assert.Empty(t, twoFaLoginStepFirst.Data.Token)
+	assert.Empty(t, twoFaLoginStepFirst.Data)
 	assert.Empty(t, twoFaLoginStepFirst.Error)
 	assert.Empty(t, twoFaLoginStepFirst.Error)
 	assert.Empty(t, twoFaLoginStepFirst.Errors)

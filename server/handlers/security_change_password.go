@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/anaskhan96/go-password-encoder"
 	"github.com/vavilen84/nft-project/constants"
 	"github.com/vavilen84/nft-project/dto"
@@ -30,6 +31,14 @@ func (c *SecurityController) ChangePassword(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	u, ok := r.Context().Value("user").(models.User)
+	if !ok {
+		err = errors.New("No logged in user")
+		helpers.LogError(err)
+		c.WriteErrorResponse(w, constants.UnauthorizedError, http.StatusUnauthorized)
+		return
+	}
+
 	passwordIsValid := password.Verify(dtoModel.OldPassword, u.PasswordSalt, u.Password, nil)
 	if !passwordIsValid {
 		helpers.LogError(err)
@@ -37,7 +46,7 @@ func (c *SecurityController) ChangePassword(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	u.Password = dtoModel.NewPassword
-	err = models.UserChangePassword(db, u)
+	err = models.UserChangePassword(db, &u)
 	if err != nil {
 		helpers.LogError(err)
 		c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/nft-project/dto"
-	"github.com/vavilen84/nft-project/store"
 	"io"
 	"log"
 	"net/http"
@@ -14,15 +13,9 @@ import (
 )
 
 func TestRegister_OK(t *testing.T) {
-
 	ts := initApp()
 	defer ts.Close()
-	db := store.GetDB()
-	registerResp, email, _ := registerUser(t, ts)
-
-	user := checkToken(t, db, registerResp.Data.Token)
-
-	assert.Equal(t, user.Email, email)
+	registerUser(t, ts)
 }
 
 func TestRegister_NotOK(t *testing.T) {
@@ -70,7 +63,7 @@ func TestRegister_NotOK(t *testing.T) {
 	}
 
 	assert.Equal(t, registerResp.Status, http.StatusBadRequest)
-	assert.Empty(t, registerResp.Data.Token)
+	assert.Empty(t, registerResp.Data)
 	assert.Empty(t, registerResp.Error)
 	assert.Empty(t, registerResp.Error)
 	assert.Empty(t, registerResp.Errors)

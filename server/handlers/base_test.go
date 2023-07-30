@@ -21,16 +21,12 @@ import (
 	"testing"
 )
 
-type TestRegisterRespDataToken struct {
-	Token string `json:"token"`
-}
-
 type TestRegisterResp struct {
-	Status     int                       `json:"status"`
-	Data       TestRegisterRespDataToken `json:"data"`
-	Error      string                    `json:"error"`
-	Errors     map[string][]string       `json:"errors"`
-	FormErrors map[string][]string       `json:"formErrors"`
+	Status     int                 `json:"status"`
+	Data       interface{}         `json:"data"`
+	Error      string              `json:"error"`
+	Errors     map[string][]string `json:"errors"`
+	FormErrors map[string][]string `json:"formErrors"`
 }
 
 type TestTwoFaLoginFirstRespDataToken struct {
@@ -118,7 +114,7 @@ func registerUser(t *testing.T, ts *httptest.Server) (*TestRegisterResp, string,
 	}
 
 	assert.Equal(t, registerResp.Status, http.StatusOK)
-	assert.NotEmpty(t, registerResp.Data.Token)
+	assert.Empty(t, registerResp.Data)
 	assert.Empty(t, registerResp.Error)
 	assert.Empty(t, registerResp.Error)
 	assert.Empty(t, registerResp.Errors)

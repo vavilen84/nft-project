@@ -65,12 +65,12 @@ func (User) GetValidationRules() interface{} {
 
 func (User) GetValidator() interface{} {
 	v := validator.New()
-	err := v.RegisterValidation("customPasswordValidator", CustomPasswordValidator)
+	err := v.RegisterValidation("customPasswordValidator", validation.CustomPasswordValidator)
 	if err != nil {
 		helpers.LogError(err)
 		return nil
 	}
-	err = v.RegisterValidation("customFutureValidator", CustomFutureValidator)
+	err = v.RegisterValidation("customFutureValidator", validation.CustomFutureValidator)
 	if err != nil {
 		helpers.LogError(err)
 		return nil

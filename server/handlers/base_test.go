@@ -21,6 +21,12 @@ import (
 	"testing"
 )
 
+const (
+	// user is SES verified
+	registerUserEmail    = "vladimir.teplov@gmai.com"
+	registerUserPassword = "testTEST123*"
+)
+
 type TestRegisterResp struct {
 	Status     int                 `json:"status"`
 	Data       interface{}         `json:"data"`

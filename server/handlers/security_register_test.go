@@ -15,7 +15,7 @@ import (
 func TestRegister_OK(t *testing.T) {
 	ts := initApp()
 	defer ts.Close()
-	registerUser(t, ts)
+	registerUser(t, ts, registerUserEmail, registerUserPassword)
 }
 
 func TestRegister_NotOK(t *testing.T) {

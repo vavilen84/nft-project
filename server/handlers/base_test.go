@@ -23,7 +23,7 @@ import (
 
 const (
 	// user is SES verified
-	registerUserEmail    = "vladimir.teplov@gmai.com"
+	registerUserEmail    = "vladimir.teplov@gmail.com"
 	registerUserPassword = "testTEST123*"
 )
 
@@ -74,11 +74,11 @@ func initApp() *httptest.Server {
 	return ts
 }
 
-func registerUser(t *testing.T, ts *httptest.Server, email, password string) {
+func registerUser(t *testing.T, ts *httptest.Server) {
 	body := dto.SignUp{
 		Nickname:    "test_" + helpers.GenerateRandomString(5),
-		Email:       email,
-		Password:    password,
+		Email:       registerUserEmail,
+		Password:    registerUserPassword,
 		BillingPlan: constants.FreeBillingPlan,
 	}
 	bodyBytes, err := json.Marshal(body)
@@ -120,15 +120,15 @@ func registerUser(t *testing.T, ts *httptest.Server, email, password string) {
 	assert.Empty(t, registerResp.FormErrors)
 }
 
-func loginUser(t *testing.T, ts *httptest.Server, email, password string) string {
-	twoFaLoginFirstStep(t, ts, email, password)
-	jwtTok := twoFaLoginSecondStep(t, ts, email)
+func loginUser(t *testing.T, ts *httptest.Server) string {
+	twoFaLoginFirstStep(t, ts)
+	jwtTok := twoFaLoginSecondStep(t, ts)
 	return jwtTok
 }
 
-func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server, email string) (jwtToken string) {
+func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server) (jwtToken string) {
 	db := store.GetDB()
-	u, err := models.FindUserByEmail(db, email)
+	u, err := models.FindUserByEmail(db, registerUserEmail)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -177,11 +177,11 @@ func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server, email string) (jwtT
 	return twoFaLoginSecondStep.Data.Token
 }
 
-func twoFaLoginFirstStep(t *testing.T, ts *httptest.Server, email, password string) {
+func twoFaLoginFirstStep(t *testing.T, ts *httptest.Server) {
 
 	body := dto.TwoFaLoginFirstStep{
-		Email:    email,
-		Password: password,
+		Email:    registerUserEmail,
+		Password: registerUserPassword,
 	}
 	bodyBytes, err := json.Marshal(body)
 	if err != nil {

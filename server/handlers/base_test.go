@@ -133,7 +133,7 @@ func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server) (jwtToken string) {
 		log.Fatal(err)
 	}
 
-	body := dto.TwoFaLoginSecondStep{
+	body := dto.TwoFaLoginStepTwo{
 		EmailTwoFaCode: u.EmailTwoFaCode,
 	}
 	bodyBytes, err := json.Marshal(body)
@@ -179,7 +179,7 @@ func twoFaLoginSecondStep(t *testing.T, ts *httptest.Server) (jwtToken string) {
 
 func twoFaLoginFirstStep(t *testing.T, ts *httptest.Server) {
 
-	body := dto.TwoFaLoginFirstStep{
+	body := dto.TwoFaLoginStepOne{
 		Email:    registerUserEmail,
 		Password: registerUserPassword,
 	}

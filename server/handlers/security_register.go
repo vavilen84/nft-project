@@ -11,7 +11,9 @@ import (
 	"github.com/vavilen84/nft-project/helpers"
 	"github.com/vavilen84/nft-project/models"
 	"github.com/vavilen84/nft-project/store"
+	"github.com/vavilen84/nft-project/validation"
 	"gorm.io/gorm"
+	"log"
 	"net/http"
 )
 
@@ -25,11 +27,9 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
-	validate := dto.GetValidator()
-	err = validate.Struct(dtoModel)
+	err = validation.ValidateByScenario(constants.ScenarioRegister, dtoModel)
 	if err != nil {
-		helpers.LogError(err)
-		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
+		log.Println(err)
 		return
 	}
 	u, err := models.FindUserByEmail(db, dtoModel.Email)

@@ -9,6 +9,7 @@ import (
 	"github.com/vavilen84/nft-project/helpers"
 	"github.com/vavilen84/nft-project/models"
 	"github.com/vavilen84/nft-project/store"
+	"github.com/vavilen84/nft-project/validation"
 	"log"
 	"net/http"
 )
@@ -24,8 +25,7 @@ func (c *SecurityController) ChangePassword(w http.ResponseWriter, r *http.Reque
 		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
-	validate := dto.GetValidator()
-	err = validate.ValidateByScenario(constants.ScenarioCreate, *m)
+	err = validation.ValidateByScenario(constants.ScenarioChangePassword, dtoModel)
 	if err != nil {
 		log.Println(err)
 		return

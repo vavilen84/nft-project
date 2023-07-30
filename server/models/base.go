@@ -1,10 +1,10 @@
 package models
 
 import (
-	"fmt"
 	"github.com/go-playground/validator/v10"
 	"reflect"
 	"regexp"
+	"strings"
 	"time"
 	"unicode/utf8"
 )
@@ -24,14 +24,28 @@ func CustomFutureValidator(fl validator.FieldLevel) bool {
 }
 
 func CustomPasswordValidator(fl validator.FieldLevel) bool {
-	p := fl.Field().String()
-	length := utf8.RuneCountInString(p)
+	password := fl.Field().String()
+	length := utf8.RuneCountInString(password)
 	if length < 8 {
 		return false
 	}
-	r, err := regexp.Match(alphaNumericRegexString, []byte(p))
-	if err != nil {
-		fmt.Println(err.Error())
+
+	hasUpperCase := false
+	hasLowerCase := false
+	hasDigit := false
+	hasSpecialSymbol := false
+
+	for _, char := range password {
+		if strings.ContainsRune("ABCDEFGHIJKLMNOPQRSTUVWXYZ", char) {
+			hasUpperCase = true
+		} else if strings.ContainsRune("abcdefghijklmnopqrstuvwxyz", char) {
+			hasLowerCase = true
+		} else if strings.ContainsRune("0123456789", char) {
+			hasDigit = true
+		} else if matched, _ := regexp.MatchString(`[^a-zA-Z0-9]`, string(char)); matched {
+			hasSpecialSymbol = true
+		}
 	}
-	return r
+
+	return hasUpperCase && hasLowerCase && hasDigit && hasSpecialSymbol
 }

@@ -11,8 +11,6 @@ import (
 	"time"
 )
 
-const alphaNumericRegexString = "^[a-zA-Z0-9]+$"
-
 type User struct {
 	Id                         int        `json:"id" column:"id" gorm:"primaryKey;autoIncrement:true"`
 	Email                      string     `json:"email" column:"email"`

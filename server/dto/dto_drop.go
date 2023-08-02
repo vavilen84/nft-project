@@ -11,7 +11,7 @@ import (
 type Drop struct {
 	CollectionName     string    `json:"collection_name"  `
 	Blockchain         int       `json:"blockchain"`
-	BlockchainName     int       `json:"blockchain_name"`
+	BlockchainName     string    `json:"blockchain_name"`
 	WebsiteURL         string    `json:"website_url"`
 	TwitterURL         string    `json:"twitter_url"`
 	DiscordURL         string    `json:"discord_url"`

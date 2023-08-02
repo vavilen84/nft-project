@@ -45,9 +45,13 @@ func (c *DropController) Create(w http.ResponseWriter, r *http.Request) {
 		TimeZone:           dtoModel.TimeZone,
 		PublicSalePrice:    dtoModel.PublicSalePrice,
 		TotalSupply:        dtoModel.TotalSupply,
-		BillingPlan:        dtoModel.BillingPlan,
+		BillingPlan:        models.BillingPlan(dtoModel.BillingPlan),
 		Status:             models.UnPublishedDropStatus,
 		UserID:             u.Id,
+		WebsiteURL:         dtoModel.WebsiteURL,
+		TwitterURL:         dtoModel.TwitterURL,
+		DiscordURL:         dtoModel.DiscordURL,
+		BlockchainName:     dtoModel.BlockchainName,
 	}
 
 	err = models.InsertDrop(db, m)

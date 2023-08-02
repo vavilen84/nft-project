@@ -40,3 +40,8 @@ const (
 	StandardBillingPlan
 	FeaturedBillingPlan
 )
+
+const (
+	AtLeastOneWebsiteOrGroupLinkErrMsg = "Must be set at least one of: WebsiteURL, DiscordURL, TwitterURL"
+	BlockchainNameRequiredErrMsg       = "Please, set Blockchain name"
+)

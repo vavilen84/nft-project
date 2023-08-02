@@ -19,7 +19,6 @@ type User struct {
 	PasswordSalt               string     `column:"password_salt"`
 	PasswordResetToken         string     `column:"password_reset_token"`
 	PasswordResetTokenExpireAt *time.Time `column:"password_reset_token_expire_at"`
-	BillingPlan                int        `json:"billing_plan" column:"billing_plan"`
 	Role                       int        `json:"role" column:"role"`
 	IsEmailVerified            bool       `json:"is_email_verified" column:"is_email_verified"`
 	EmailTwoFaCode             string     `json:"email_two_fa_code" column:"email_two_fa_code"`

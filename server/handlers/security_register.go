@@ -50,7 +50,6 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 		Email:           dtoModel.Email,
 		Password:        dtoModel.Password,
 		Nickname:        dtoModel.Nickname,
-		BillingPlan:     dtoModel.BillingPlan,
 		Role:            constants.RoleUser,
 		IsEmailVerified: false,
 		EmailTwoFaCode:  emailVerificationToken,

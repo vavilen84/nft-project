@@ -34,7 +34,6 @@ func (User) GetValidationRules() interface{} {
 			"Email":          "min=3,max=255,email,required",
 			"Nickname":       "min=3,max=255,required",
 			"Password":       "min=8,max=5000,required,customPasswordValidator",
-			"BillingPlan":    "required,gt=0,lt=4",
 			"Role":           "required,gt=0,lt=2", // we can create only users, admin should be created separately
 			"EmailTwoFaCode": "required",
 		},

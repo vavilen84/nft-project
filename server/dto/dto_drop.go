@@ -9,7 +9,8 @@ import (
 )
 
 type Drop struct {
-	CollectionName     string    `json:"collection_name"  `
+	Id                 int       `json:"id"`
+	CollectionName     string    `json:"collection_name"`
 	Blockchain         int       `json:"blockchain"`
 	BlockchainName     string    `json:"blockchain_name"`
 	WebsiteURL         string    `json:"website_url"`
@@ -35,6 +36,16 @@ func (Drop) GetValidator() interface{} {
 func (Drop) GetValidationRules() interface{} {
 	return validation.ScenarioRules{
 		constants.ScenarioCreate: validation.FieldRules{
+			"CollectionName":     "required",
+			"Blockchain":         "required,gt=0,lt=19",
+			"PublicSaleDateTime": "required,customFutureValidator",
+			"TimeZone":           "required",
+			"PublicSalePrice":    "required",
+			"TotalSupply":        "required",
+			"BillingPlan":        "required,gt=0,lt=3",
+		},
+		constants.ScenarioUpdate: validation.FieldRules{
+			"Id":                 "required",
 			"CollectionName":     "required",
 			"Blockchain":         "required,gt=0,lt=19",
 			"PublicSaleDateTime": "required,customFutureValidator",

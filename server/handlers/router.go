@@ -60,6 +60,7 @@ func BuildV1Paths() *chi.Mux {
 		c := DropController{}
 
 		r.With(UserAuth).Post("/create", c.Create)
+		r.With(UserAuth).Post("/update", c.Update)
 	})
 	return r
 }

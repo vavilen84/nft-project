@@ -85,3 +85,38 @@ func InsertDrop(db *gorm.DB, m *Drop) (err error) {
 	}
 	return
 }
+
+func UpdateDrop(db *gorm.DB, m *Drop) (err error) {
+	err = validation.ValidateByScenario(constants.ScenarioCreate, *m)
+	if err != nil {
+		helpers.LogError(err)
+		return
+	}
+
+	if m.WebsiteURL == "" && m.DiscordURL == "" && m.TwitterURL == "" {
+		err = errors.New(AtLeastOneWebsiteOrGroupLinkErrMsg)
+		helpers.LogError(err)
+		return
+	}
+
+	if m.Blockchain == OtherBlockchain && m.BlockchainName == "" {
+		err = errors.New(BlockchainNameRequiredErrMsg)
+		helpers.LogError(err)
+		return
+	}
+
+	err = db.Save(m).Error
+	if err != nil {
+		helpers.LogError(err)
+	}
+	return
+}
+
+func FindDropById(db *gorm.DB, id int) (*Drop, error) {
+	m := Drop{}
+	err := db.Where("id = ?", id).First(&m).Error
+	if err != nil {
+		helpers.LogError(err)
+	}
+	return &m, err
+}

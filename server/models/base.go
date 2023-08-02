@@ -11,6 +11,21 @@ const (
 	Ethereum
 	Polygon
 	Solana
+	Arbitrum
+	Avalanche
+	Binance
+	Cardano
+	Celo
+	Cronos
+	Fantom
+	Flare
+	IMX
+	Tron
+	Wax
+	Ziliqa
+	Ton
+	Aptos
+	OtherBlockchain
 )
 
 const (

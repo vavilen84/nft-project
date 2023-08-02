@@ -1,12 +1,12 @@
 package models
 
 import (
+	"errors"
 	"github.com/go-playground/validator/v10"
 	"github.com/vavilen84/nft-project/constants"
 	"github.com/vavilen84/nft-project/helpers"
 	"github.com/vavilen84/nft-project/validation"
 	"gorm.io/gorm"
-	"log"
 	"time"
 )
 
@@ -14,6 +14,7 @@ type Drop struct {
 	Id                   int        `json:"id" column:"id" gorm:"primaryKey;autoIncrement:true"`
 	CollectionName       string     `json:"collection_name"  `
 	Blockchain           Blockchain `json:"blockchain" column:"blockchain"`
+	BlockchainName       string     `json:"blockchain_name" column:"blockchain_name"`
 	WebsiteURL           string     `json:"website_url" column:"website_url"`
 	TwitterURL           string     `json:"twitter_url" column:"twitter_url"`
 	DiscordURL           string     `json:"discord_url" column:"discord_url"`
@@ -44,6 +45,7 @@ func (Drop) GetValidationRules() interface{} {
 			"CollectionName":     "min=3,max=255,required",
 			"Blockchain":         "required",
 			"PublicSaleDateTime": "required",
+			"TimeZone":           "required",
 			"PublicSalePrice":    "required",
 			"TotalSupply":        "required",
 			"UserID":             "required",
@@ -56,9 +58,22 @@ func (Drop) GetValidationRules() interface{} {
 func InsertDrop(db *gorm.DB, m *Drop) (err error) {
 	err = validation.ValidateByScenario(constants.ScenarioCreate, *m)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
 		return
 	}
+
+	if m.WebsiteURL == "" && m.DiscordURL == "" && m.TwitterURL == "" {
+		err = errors.New("Must be set at least one of: WebsiteURL, DiscordURL, TwitterURL")
+		helpers.LogError(err)
+		return
+	}
+
+	if m.Blockchain == OtherBlockchain && m.BlockchainName == "" {
+		err = errors.New("Please, set Blockchain name")
+		helpers.LogError(err)
+		return
+	}
+
 	err = db.Create(m).Error
 	if err != nil {
 		helpers.LogError(err)

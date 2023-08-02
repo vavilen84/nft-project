@@ -61,6 +61,7 @@ func BuildV1Paths() *chi.Mux {
 
 		r.With(UserAuth).Post("/create", c.Create)
 		r.With(UserAuth).Post("/update", c.Update)
+		r.With(UserAuth).Post("/upload-preview-image", c.UploadPreviewImage)
 	})
 	return r
 }

@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"path/filepath"
 	"reflect"
 	"runtime"
 	"time"
@@ -85,4 +86,20 @@ func ParseTime(d string) (t time.Time, err error) {
 
 func GetDefaultJWTExpiresAt() time.Time {
 	return time.Now().Add(time.Duration(365) * 24 * time.Hour)
+}
+
+func GenerateS3FilePath(prefix, fileExtension string) string {
+
+	currentTime := time.Now()
+	year := fmt.Sprintf("%04d", currentTime.Year())
+	month := fmt.Sprintf("%02d", currentTime.Month())
+	day := fmt.Sprintf("%02d", currentTime.Day())
+
+	// Step 2: Generate a unique hash value.
+	hash := GenerateRandomString(18)
+
+	// Step 3: Combine the date and hash to create the file path.
+	filePath := filepath.Join(prefix, year, month, day, hash+fileExtension)
+
+	return filePath
 }

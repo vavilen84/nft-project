@@ -36,15 +36,20 @@ func (m *Drop) TableName() string {
 
 func (Drop) GetValidator() interface{} {
 	v := validator.New()
+	err := v.RegisterValidation("customFutureValidator", validation.CustomFutureValidator)
+	if err != nil {
+		helpers.LogError(err)
+		return nil
+	}
 	return v
 }
 
 func (Drop) GetValidationRules() interface{} {
 	return validation.ScenarioRules{
 		constants.ScenarioCreate: validation.FieldRules{
-			"CollectionName":     "min=3,max=255,required",
-			"Blockchain":         "required",
-			"PublicSaleDateTime": "required",
+			"CollectionName":     "required",
+			"Blockchain":         "required,gt=0,lt=19",
+			"PublicSaleDateTime": "required,customFutureValidator",
 			"TimeZone":           "required",
 			"PublicSalePrice":    "required",
 			"TotalSupply":        "required",

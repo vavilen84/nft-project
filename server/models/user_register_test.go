@@ -136,55 +136,6 @@ func TestUser_CreateScenario_passwordValidation(t *testing.T) {
 	}
 }
 
-//func TestUser_CreateScenario_billingPlanValidation(t *testing.T) {
-//	db, mock, err := sqlmock.New()
-//	if err != nil {
-//		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-//	}
-//	defer db.Close()
-//	gormDB, err := gorm.Open(mysql.New(mysql.Config{
-//		SkipInitializeWithVersion: true,
-//		Conn:                      db,
-//	}), &gorm.Config{})
-//
-//	// should be error
-//	m := User{
-//		BillingPlan: 0,
-//	}
-//	err = InsertUser(gormDB, &m)
-//	v, ok := err.(validation.Errors)
-//	if !ok {
-//		log.Fatalln("can not assert validation.Errors")
-//	}
-//	assert.Equal(t, fmt.Sprintf(constants.RequiredErrorMsg, "User", "BillingPlan"), v["BillingPlan"][0].Message)
-//
-//	// should be error
-//	m = User{
-//		BillingPlan: 4,
-//	}
-//	err = InsertUser(gormDB, &m)
-//	v, ok = err.(validation.Errors)
-//	if !ok {
-//		log.Fatalln("can not assert validation.Errors")
-//	}
-//	assert.Equal(t, fmt.Sprintf(constants.LowerThanTagErrorMsg, "User", "4"), v["BillingPlan"][0].Message)
-//
-//	m.BillingPlan = constants.ProBillingPlan
-//	err = InsertUser(gormDB, &m)
-//	v, ok = err.(validation.Errors)
-//	if !ok {
-//		log.Fatalln("can not assert validation.Errors")
-//	}
-//
-//	// no error
-//	_, ok = v["BillingPlan"]
-//	assert.False(t, ok)
-//
-//	if err := mock.ExpectationsWereMet(); err != nil {
-//		t.Errorf("there were unfulfilled expectations: %s", err)
-//	}
-//}
-
 func TestUser_CreateScenario_roleValidation(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {

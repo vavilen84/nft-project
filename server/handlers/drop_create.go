@@ -46,7 +46,7 @@ func (c *DropController) Create(w http.ResponseWriter, r *http.Request) {
 		PublicSalePrice:    dtoModel.PublicSalePrice,
 		TotalSupply:        dtoModel.TotalSupply,
 		BillingPlan:        dtoModel.BillingPlan,
-		Status:             models.UnPublished,
+		Status:             models.UnPublishedDropStatus,
 		UserID:             u.Id,
 	}
 

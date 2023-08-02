@@ -44,7 +44,7 @@ func (c *DropController) Update(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		helpers.LogError(err)
 		if err == gorm.ErrRecordNotFound {
-			err = errors.New(fmt.Sprintf("drop with id %s not found", dtoModel.Id))
+			err = errors.New(fmt.Sprintf("drop with id %d not found", dtoModel.Id))
 			c.WriteErrorResponse(w, err, http.StatusNotFound)
 		} else {
 			c.WriteErrorResponse(w, constants.ServerError, http.StatusInternalServerError)

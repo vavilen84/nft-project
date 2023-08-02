@@ -14,6 +14,7 @@ type Drop struct {
 	TwitterURL         string    `json:"twitter_url"`
 	DiscordURL         string    `json:"discord_url"`
 	PublicSaleDateTime time.Time `json:"public_sale_date"`
+	TimeZone           string    `json:"time_zone"`
 	PublicSalePrice    float64   `json:"public_sale_price"`
 	TotalSupply        int       `json:"total_supply"`
 	BillingPlan        int       `json:"billing_plan"`
@@ -30,6 +31,7 @@ func (Drop) GetValidationRules() interface{} {
 			"CollectionName":     "min=3,max=255,required",
 			"Blockchain":         "required",
 			"PublicSaleDateTime": "required",
+			"TimeZone":           "required",
 			"PublicSalePrice":    "required",
 			"TotalSupply":        "required",
 			"BillingPlan":        "required,gt=0,lt=3",

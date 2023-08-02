@@ -43,35 +43,23 @@ func BuildV1Paths() *chi.Mux {
 		AllowCredentials: false,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 	}))
-	//r.Route("/posts", func(r chi.Router) {
-	//	c := PostsController{}
-	//	r.Post("/", c.Create)
-	//	r.Put("/{ID}", c.Update)
-	//	r.Delete("/{ID}", c.Delete)
-	//	r.Get("/{ID}", c.GetOne)
-	//	r.Get("/", c.GetAll)
-	//})
+
 	r.Route("/security", func(r chi.Router) {
 		c := SecurityController{}
-
-		//r.Route("/protected", func(r chi.Router) {
-		//	r.Use(UserAuth)
-		//	r.Post("/two-fa-login-step-one", c.TwoFaLoginStepOne)
-		//	r.Post("/two-fa-login-step-two", c.TwoFaLoginStepTwo)
-		//	r.Post("/register", c.Register)
-		//	r.Post("/forgot-password", c.ForgotPassword)
-		//	r.Post("/reset-password", c.ResetPassword)
-		//	r.Post("/change-password", c.ChangePassword)
-		//	r.Get("/verify-email", c.VerifyEmail)
-		//})
 
 		r.Post("/two-fa-login-step-one", c.TwoFaLoginStepOne)
 		r.Post("/two-fa-login-step-two", c.TwoFaLoginStepTwo)
 		r.Post("/register", c.Register)
 		r.Post("/forgot-password", c.ForgotPassword)
 		r.Post("/reset-password", c.ResetPassword)
-		r.With(UserAuth).Post("/change-password", c.ChangePassword)
 		r.Get("/verify-email", c.VerifyEmail)
+
+		r.With(UserAuth).Post("/change-password", c.ChangePassword)
+	})
+	r.Route("/drop", func(r chi.Router) {
+		c := DropController{}
+
+		r.With(UserAuth).Post("/create", c.Create)
 	})
 	return r
 }

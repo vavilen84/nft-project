@@ -8,35 +8,35 @@ type BillingPlan int
 
 const (
 	_ Blockchain = iota
-	Ethereum
-	Polygon
-	Solana
-	Arbitrum
-	Avalanche
-	Binance
-	Cardano
-	Celo
-	Cronos
-	Fantom
-	Flare
-	IMX
-	Tron
-	Wax
-	Ziliqa
-	Ton
-	Aptos
+	EthereumBlockchain
+	PolygonBlockchain
+	SolanaBlockchain
+	ArbitrumBlockchain
+	AvalancheBlockchain
+	BinanceBlockchain
+	CardanoBlockchain
+	CeloBlockchain
+	CronosBlockchain
+	FantomBlockchain
+	FlareBlockchain
+	IMXBlockchain
+	TronBlockchain
+	WaxBlockchain
+	ZiliqaBlockchain
+	TonBlockchain
+	AptosBlockchain
 	OtherBlockchain
 )
 
 const (
 	_ DropStatus = iota
-	UnPublished
-	InReview
-	Published
+	UnPublishedDropStatus
+	InReviewDropStatus
+	PublishedDropStatus
 )
 
 const (
 	_ BillingPlan = iota
-	Standard
-	Featured
+	StandardBillingPlan
+	FeaturedBillingPlan
 )

@@ -3,6 +3,7 @@ package dto
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/vavilen84/nft-project/constants"
+	"github.com/vavilen84/nft-project/helpers"
 	"github.com/vavilen84/nft-project/validation"
 	"time"
 )
@@ -23,6 +24,11 @@ type Drop struct {
 
 func (Drop) GetValidator() interface{} {
 	v := validator.New()
+	err := v.RegisterValidation("customFutureValidator", validation.CustomFutureValidator)
+	if err != nil {
+		helpers.LogError(err)
+		return nil
+	}
 	return v
 }
 
@@ -31,7 +37,7 @@ func (Drop) GetValidationRules() interface{} {
 		constants.ScenarioCreate: validation.FieldRules{
 			"CollectionName":     "required",
 			"Blockchain":         "required,gt=0,lt=19",
-			"PublicSaleDateTime": "required",
+			"PublicSaleDateTime": "required,customFutureValidator",
 			"TimeZone":           "required",
 			"PublicSalePrice":    "required",
 			"TotalSupply":        "required",

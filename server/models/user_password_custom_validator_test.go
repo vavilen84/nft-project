@@ -15,7 +15,7 @@ func Test_PasswordValidation_min(t *testing.T) {
 	}
 	err := validation.ValidateByScenario(constants.ScenarioCreate, u)
 	if err != nil {
-		log.Println(err)
+		log.Fatalln(err)
 		return
 	}
 	v, ok := err.(validation.Errors)
@@ -31,7 +31,7 @@ func Test_PasswordValidation_customValidation_1(t *testing.T) {
 	}
 	err := validation.ValidateByScenario(constants.ScenarioCreate, u)
 	if err != nil {
-		log.Println(err)
+		log.Fatalln(err)
 		return
 	}
 	v, ok := err.(validation.Errors)
@@ -47,7 +47,7 @@ func Test_PasswordValidation_customValidation_2(t *testing.T) {
 	}
 	err := validation.ValidateByScenario(constants.ScenarioCreate, u)
 	if err != nil {
-		log.Println(err)
+		log.Fatalln(err)
 		return
 	}
 	v, ok := err.(validation.Errors)
@@ -63,7 +63,7 @@ func Test_PasswordValidation_customValidation_3(t *testing.T) {
 	}
 	err := validation.ValidateByScenario(constants.ScenarioCreate, u)
 	if err != nil {
-		log.Println(err)
+		log.Fatalln(err)
 		return
 	}
 	v, ok := err.(validation.Errors)
@@ -79,7 +79,7 @@ func Test_PasswordValidation_customValidation_4(t *testing.T) {
 	}
 	err := validation.ValidateByScenario(constants.ScenarioCreate, u)
 	if err != nil {
-		log.Println(err)
+		log.Fatalln(err)
 		return
 	}
 	assert.Nil(t, err)

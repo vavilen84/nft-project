@@ -7,7 +7,6 @@ import (
 	"github.com/vavilen84/nft-project/helpers"
 	"github.com/vavilen84/nft-project/validation"
 	"gorm.io/gorm"
-	"log"
 	"time"
 )
 
@@ -79,13 +78,13 @@ func (User) GetValidator() interface{} {
 func InsertUser(db *gorm.DB, m *User) (err error) {
 	err = validation.ValidateByScenario(constants.ScenarioCreate, *m)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
 		return
 	}
 	m.encodePassword()
 	err = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
 		return
 	}
 	err = db.Create(m).Error
@@ -98,7 +97,7 @@ func InsertUser(db *gorm.DB, m *User) (err error) {
 func ForgotPassword(db *gorm.DB, m *User) (err error) {
 	err = validation.ValidateByScenario(constants.ScenarioForgotPassword, *m)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
 		return
 	}
 	sql := "UPDATE user SET password_reset_token = ?, password_reset_token_expire_at = ? WHERE id = ?"
@@ -108,7 +107,7 @@ func ForgotPassword(db *gorm.DB, m *User) (err error) {
 func SetEmailTwoFaCode(db *gorm.DB, m *User) (err error) {
 	err = validation.ValidateByScenario(constants.ScenarioLoginTwoFaStepOne, *m)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
 		return
 	}
 	sql := "UPDATE user SET email_two_fa_code = ? WHERE id = ?"
@@ -128,7 +127,7 @@ func ResetResetPasswordToken(db *gorm.DB, m *User) (err error) {
 func SetUserEmailVerified(db *gorm.DB, m *User) (err error) {
 	err = validation.ValidateByScenario(constants.ScenarioVerifyEmail, *m)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
 		return
 	}
 	sql := "UPDATE user SET is_email_verified = ?, email_two_fa_code = ? WHERE id = ?"
@@ -138,13 +137,13 @@ func SetUserEmailVerified(db *gorm.DB, m *User) (err error) {
 func UserResetPassword(db *gorm.DB, m *User) (err error) {
 	err = validation.ValidateByScenario(constants.ScenarioResetPassword, *m)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
 		return
 	}
 	m.encodePassword()
 	err = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
 		return
 	}
 	sql := "UPDATE user SET password = ?, password_salt = ? WHERE id = ?"
@@ -154,13 +153,13 @@ func UserResetPassword(db *gorm.DB, m *User) (err error) {
 func UserChangePassword(db *gorm.DB, m *User) (err error) {
 	err = validation.ValidateByScenario(constants.ScenarioChangePassword, *m)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
 		return
 	}
 	m.encodePassword()
 	err = validation.ValidateByScenario(constants.ScenarioHashPassword, *m)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
 		return
 	}
 	sql := "UPDATE user SET password = ?, password_salt = ? WHERE id = ?"

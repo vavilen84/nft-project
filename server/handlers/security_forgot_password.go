@@ -12,7 +12,6 @@ import (
 	"github.com/vavilen84/nft-project/store"
 	"github.com/vavilen84/nft-project/validation"
 	"gorm.io/gorm"
-	"log"
 	"net/http"
 	"time"
 )
@@ -28,7 +27,8 @@ func (c *SecurityController) ForgotPassword(w http.ResponseWriter, r *http.Reque
 	}
 	err = validation.ValidateByScenario(constants.ScenarioForgotPassword, dtoModel)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
+		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
 	db := store.GetDB()

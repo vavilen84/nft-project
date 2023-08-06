@@ -13,7 +13,6 @@ import (
 	"github.com/vavilen84/nft-project/store"
 	"github.com/vavilen84/nft-project/validation"
 	"gorm.io/gorm"
-	"log"
 	"net/http"
 )
 
@@ -29,7 +28,8 @@ func (c *SecurityController) Register(w http.ResponseWriter, r *http.Request) {
 	}
 	err = validation.ValidateByScenario(constants.ScenarioRegister, dtoModel)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
+		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
 	u, err := models.FindUserByEmail(db, dtoModel.Email)

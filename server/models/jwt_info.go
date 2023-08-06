@@ -7,7 +7,6 @@ import (
 	"github.com/vavilen84/nft-project/helpers"
 	"github.com/vavilen84/nft-project/validation"
 	"gorm.io/gorm"
-	"log"
 	"time"
 )
 
@@ -48,7 +47,7 @@ func InsertJWTInfo(db *gorm.DB, m *JWTInfo) (err error) {
 	m.generateSecret()
 	err = validation.ValidateByScenario(constants.ScenarioCreate, *m)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
 		return
 	}
 	err = db.Create(m).Error

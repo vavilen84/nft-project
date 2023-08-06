@@ -24,10 +24,9 @@ func TestRegister_NotOK(t *testing.T) {
 	defer ts.Close()
 
 	body := dto.Register{
-		Nickname:    "",
-		Email:       "vladimir.teplovgmail.com",
-		Password:    "1234567",
-		BillingPlan: 10,
+		Nickname: "",
+		Email:    "vladimir.teplovgmail.com",
+		Password: "1234567",
 	}
 	bodyBytes, err := json.Marshal(body)
 	if err != nil {

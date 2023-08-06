@@ -11,7 +11,6 @@ import (
 	"github.com/vavilen84/nft-project/store"
 	"github.com/vavilen84/nft-project/validation"
 	"gorm.io/gorm"
-	"log"
 	"net/http"
 )
 
@@ -26,7 +25,8 @@ func (c *SecurityController) TwoFaLoginStepTwo(w http.ResponseWriter, r *http.Re
 	}
 	err = validation.ValidateByScenario(constants.ScenarioTwoFaLoginStepTwo, dtoModel)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
+		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
 	db := store.GetDB()

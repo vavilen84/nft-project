@@ -7,7 +7,6 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"github.com/vavilen84/nft-project/auth"
-	"github.com/vavilen84/nft-project/constants"
 	"github.com/vavilen84/nft-project/dto"
 	"github.com/vavilen84/nft-project/handlers"
 	"github.com/vavilen84/nft-project/helpers"
@@ -79,10 +78,9 @@ func initApp() *httptest.Server {
 
 func registerUser(t *testing.T, ts *httptest.Server) {
 	body := dto.Register{
-		Nickname:    "test_" + helpers.GenerateRandomString(5),
-		Email:       registerUserEmail,
-		Password:    registerUserPassword,
-		BillingPlan: constants.FreeBillingPlan,
+		Nickname: "test_" + helpers.GenerateRandomString(5),
+		Email:    registerUserEmail,
+		Password: registerUserPassword,
 	}
 	bodyBytes, err := json.Marshal(body)
 	if err != nil {

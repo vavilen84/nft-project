@@ -11,7 +11,6 @@ import (
 	"github.com/vavilen84/nft-project/store"
 	"github.com/vavilen84/nft-project/validation"
 	"gorm.io/gorm"
-	"log"
 	"net/http"
 )
 
@@ -36,7 +35,8 @@ func (c *DropController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 	err = validation.ValidateByScenario(constants.ScenarioUpdate, dtoModel)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
+		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
 

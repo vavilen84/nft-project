@@ -9,7 +9,6 @@ import (
 	"github.com/vavilen84/nft-project/models"
 	"github.com/vavilen84/nft-project/store"
 	"github.com/vavilen84/nft-project/validation"
-	"log"
 	"net/http"
 )
 
@@ -34,7 +33,8 @@ func (c *DropController) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	err = validation.ValidateByScenario(constants.ScenarioCreate, dtoModel)
 	if err != nil {
-		log.Println(err)
+		helpers.LogError(err)
+		c.WriteErrorResponse(w, constants.BadRequestError, http.StatusBadRequest)
 		return
 	}
 

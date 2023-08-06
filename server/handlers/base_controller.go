@@ -18,10 +18,13 @@ func (*BaseController) WriteSuccessResponse(w http.ResponseWriter, data interfac
 	writeResponse(w, resp, status)
 }
 
-func (*BaseController) WriteErrorResponse(w http.ResponseWriter, err error, status int) {
+func (*BaseController) WriteErrorResponse(w http.ResponseWriter, err interface{}, status int) {
 	resp := dto.Response{}
-	helpers.LogError(err)
-	ok := false
+	e, ok := err.(error)
+	if ok {
+		helpers.LogError(e)
+	}
+	ok = false
 	errs, ok := err.(validation.Errors)
 	if ok {
 		formErrors := make(map[string][]string)
@@ -38,7 +41,7 @@ func (*BaseController) WriteErrorResponse(w http.ResponseWriter, err error, stat
 		}
 	} else {
 		resp = dto.Response{
-			Error:  err.Error(),
+			Error:  e.Error(),
 			Status: status,
 		}
 	}
